@@ -1,5 +1,5 @@
 package soa
 
-type Service interface {
-	init(config Config)
+type service interface {
+	init(config config)
 }

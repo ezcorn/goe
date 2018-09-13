@@ -1,4 +1,4 @@
 package soa
 
-type Config struct {
+type config struct {
 }

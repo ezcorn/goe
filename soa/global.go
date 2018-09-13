@@ -1,4 +1,4 @@
 package soa
 
-type Global struct {
+type global struct {
 }
