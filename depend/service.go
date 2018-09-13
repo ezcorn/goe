@@ -8,7 +8,7 @@ func serviceParser() {
 
 }
 
-func DependInitialize() {
+func Initialize() {
 	configParser()
 	serviceParser()
 }
