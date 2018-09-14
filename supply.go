@@ -1,0 +1,5 @@
+package goe
+
+func InitializeSupply() {
+
+}
