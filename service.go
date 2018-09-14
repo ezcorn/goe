@@ -7,7 +7,7 @@ import (
 
 func InitializeService(serviceRepo string) {
 	go func() {
-		duration := time.Second * 10
+		duration := time.Minute * 10
 		for {
 			// Clone serviceRepo to local
 			os.RemoveAll("service")
@@ -18,4 +18,8 @@ func InitializeService(serviceRepo string) {
 			time.Sleep(duration)
 		}
 	}()
+}
+
+func RequestService(serviceRoute string) {
+	// http.Post()
 }
