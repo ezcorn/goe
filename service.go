@@ -20,6 +20,6 @@ func InitializeService(serviceRepo string) {
 	}()
 }
 
-func RequestService(serviceRoute string) {
+func RequestService(serviceRoute string, inputJson interface{}) {
 	// http.Post()
 }
