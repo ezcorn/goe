@@ -13,3 +13,7 @@ func GitClone(repo string, name string) {
 		os.Exit(1)
 	}
 }
+
+func GitPull(repo string) {
+
+}
