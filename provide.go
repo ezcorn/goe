@@ -5,9 +5,9 @@ import (
 	"strconv"
 )
 
-type routes map[string]func(http.ResponseWriter, *http.Request)
+type HttpRoutes map[string]func(http.ResponseWriter, *http.Request)
 
-func InitProvideServer(routes routes, port int) {
+func InitProvideServer(routes HttpRoutes, port int) {
 	for route, action := range routes {
 		http.HandleFunc(route, action)
 	}
