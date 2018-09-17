@@ -14,7 +14,7 @@ func InitServer(port int, repository string) {
 	initVendorTask(repository)
 	http.HandleFunc("/goe/makeDependFile", makeDependFile)
 	for route, action := range HttpRouteMap {
-		log.Println("load http route " + route)
+		log.Println("server route " + route)
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			action(writer, request)
 		})
