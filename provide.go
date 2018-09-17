@@ -11,3 +11,7 @@ func InitProvideServer(routes map[string]func(http.ResponseWriter, *http.Request
 	}
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
+
+func MakeEmptyRoutes() map[string]func(http.ResponseWriter, *http.Request) {
+	return make(map[string]func(http.ResponseWriter, *http.Request))
+}
