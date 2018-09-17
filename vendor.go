@@ -27,8 +27,7 @@ func initVendorTask(repository string) {
 func cloneVendor(repository string) {
 	os.RemoveAll(vendor)
 	_, err := exec.Command("git", "clone", repository, vendor).Output()
-	cmd := "git clone " + repository + " " + vendor
-	log.Println(cmd)
+	log.Println("git clone " + repository + " " + vendor)
 	if err != nil {
 		os.Exit(1)
 	}
