@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func InitIncludeServer(includeRepo string) {
+func initIncludeServer(includeRepo string) {
 	go func() {
 		duration := time.Minute * 5
 		for {
