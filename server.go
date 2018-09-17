@@ -8,12 +8,12 @@ import (
 
 type RouteMap map[string]func(http.ResponseWriter, *http.Request)
 
-var HttpRouteMap RouteMap = make(RouteMap)
+var ServerRoute RouteMap = make(RouteMap)
 
 func InitServer(port int, repository string) {
 	initVendorTask(repository)
 	http.HandleFunc("/goe/makeDependFile", makeDependFile)
-	for route, action := range HttpRouteMap {
+	for route, action := range ServerRoute {
 		log.Println("server route " + route)
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			action(writer, request)
