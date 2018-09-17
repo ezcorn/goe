@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-func initIncludeServer(includeRepo string) {
+func initDependTask(repository string) {
 	go func() {
 		duration := time.Minute * 5
 		for {
 			// Clone serviceRepo to local
-			os.RemoveAll("include")
-			GitClone(includeRepo, "include")
+			os.RemoveAll("depend")
+			GitClone(repository, "depend")
 			// Read service json to memory
 
 			// Sleep some time
