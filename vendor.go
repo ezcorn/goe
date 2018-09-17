@@ -1,7 +1,9 @@
 package goe
 
 import (
+	"log"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -11,7 +13,7 @@ type Input interface{}
 
 type Output interface{}
 
-func initDependTask(repository string) {
+func initVendorTask(repository string) {
 	cloneVendor(repository)
 	go func() {
 		duration := time.Minute * 5
@@ -24,9 +26,14 @@ func initDependTask(repository string) {
 
 func cloneVendor(repository string) {
 	os.RemoveAll(vendor)
-	gitClone(repository, vendor)
+	_, err := exec.Command("git", "clone", repository, vendor).Output()
+	cmd := "git clone " + repository + " " + vendor
+	log.Println(cmd)
+	if err != nil {
+		os.Exit(1)
+	}
 }
 
-func CallMethod(depend string, action string, input Input) Output {
+func CallVendor(vendor string, action string, input Input) Output {
 	return nil
 }
