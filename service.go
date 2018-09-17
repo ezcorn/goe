@@ -7,7 +7,7 @@ import (
 
 func InitializeService(serviceRepo string) {
 	go func() {
-		duration := time.Minute * 10
+		duration := time.Minute * 5
 		for {
 			// Clone serviceRepo to local
 			os.RemoveAll("service")
