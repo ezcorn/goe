@@ -1,14 +1,13 @@
 package goe
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func InitProvideServer() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to my website!")
-	})
-
-	http.ListenAndServe(":80", nil)
+func InitProvideServer(routes map[string]func(http.ResponseWriter, *http.Request), port int) {
+	for route, action := range routes {
+		http.HandleFunc(route, action)
+	}
+	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }

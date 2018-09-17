@@ -5,21 +5,17 @@ import (
 	"time"
 )
 
-func InitializeService(serviceRepo string) {
+func InitIncludeServer(includeRepo string) {
 	go func() {
 		duration := time.Minute * 5
 		for {
 			// Clone serviceRepo to local
-			os.RemoveAll("service")
-			GitClone(serviceRepo, "service")
+			os.RemoveAll("include")
+			GitClone(includeRepo, "include")
 			// Read service json to memory
 
 			// Sleep some time
 			time.Sleep(duration)
 		}
 	}()
-}
-
-func RequestService(serviceRoute string, inputJson interface{}) {
-	// http.Post()
 }
