@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func GitClone(repo string, name string) {
+func gitClone(repo string, name string) {
 	_, err := exec.Command("git", "clone", repo, name).Output()
 	cmd := "git clone " + repo + " " + name
 	log.Println(cmd)

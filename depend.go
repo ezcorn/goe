@@ -11,7 +11,7 @@ func initDependTask(repository string) {
 		for {
 			// Clone serviceRepo to local
 			os.RemoveAll("depend")
-			GitClone(repository, "depend")
+			gitClone(repository, "depend")
 			// Read service json to memory
 
 			// Sleep some time
