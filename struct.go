@@ -32,6 +32,19 @@ type Action struct {
 	Execute Execute `json:"-"`       //
 }
 
+func NewAction(name string, comment string, method string, execute Execute) Action {
+	if execute == nil {
+		execute = func(writer http.ResponseWriter, request *http.Request) {}
+	}
+	return Action{
+		Name:    name,
+		Method:  method,
+		Comment: comment,
+		Listens: make(Listens),
+		Execute: execute,
+	}
+}
+
 type Listen struct {
 	Name    string  `json:"name"`    //
 	Comment string  `json:"comment"` //
@@ -39,18 +52,21 @@ type Listen struct {
 	Execute ExecRet `json:"-"`       //
 }
 
-func New() Listen {
-	return Listen{
-		Name:    "",
-		Comment: "",
-		Actions: make(Actions),
-		Execute: func(writer http.ResponseWriter, request *http.Request) Execute {
+func NewListen(name string, comment string, execute ExecRet) Listen {
+	if execute == nil {
+		execute = func(writer http.ResponseWriter, request *http.Request) Execute {
 			return nil
-		},
+		}
+	}
+	return Listen{
+		Name:    name,
+		Comment: comment,
+		Actions: make(Actions),
+		Execute: execute,
 	}
 }
 
-func Include(listen string, action string) {
+func Join(listen string, action string) {
 	if listenObj, exist := ListenRegistry[listen]; exist {
 		if actionObj, exist := ActionRegistry[action]; exist {
 			ListenRegistry[listen].Actions[action] = actionObj
