@@ -12,9 +12,3 @@ func ReadFile(fn string) []byte {
 	}
 	return buf
 }
-
-func Nil(v interface{}, exec func()) {
-	if v == nil {
-		exec()
-	}
-}
