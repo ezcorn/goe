@@ -33,6 +33,6 @@ func cloneVendor(repository string) {
 	}
 }
 
-func CallVendor(vendor string, action string, input Input) Output {
+func CallVendor(name string, action string, input Input) Output {
 	return nil
 }

@@ -1,27 +1,26 @@
 package goe
 
 import (
-	"log"
+	"encoding/json"
 	"net/http"
 	"strconv"
 )
 
-type RouteMap map[string]func(http.ResponseWriter, *http.Request)
-
-var ServerRoute RouteMap = make(RouteMap)
-
-func InitServer(port int, repository string) {
-	initVendorTask(repository)
-	http.HandleFunc("/goe/makeDependFile", makeDependFile)
-	for route, action := range ServerRoute {
-		log.Println("server route " + route)
+func InitServer(port int) {
+	// Read goe.json file
+	json.Unmarshal(ReadFile("config.json"), &GlobalServerConfig)
+	// Init vendor task
+	initVendorTask(GlobalServerConfig.Vendor)
+	for route, action := range GlobalServerRouter {
+		// Register restful api
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
-			action(writer, request)
+			// Execute listen list
+			for e := action.Listens.Front(); e != nil; e = e.Next() {
+				e.Value.(*Listen).Execute(writer, request)
+			}
+			// Execute action
+			action.Execute(writer, request)
 		})
 	}
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
-}
-
-func makeDependFile(writer http.ResponseWriter, request *http.Request) {
-
 }
