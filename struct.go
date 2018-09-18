@@ -15,23 +15,26 @@ type Config struct {
 	Router  Router `json:"router"`
 }
 
-/**
-
- */
 type Action struct {
-	Listens *list.List
-	Execute func(http.ResponseWriter, *http.Request)
+	Route   string `json:"route"`
+	Method  string `json:"method"`
+	Comment string `json:"comment"`
+	// This action use listens
+	Listens *list.List `json:"listens"`
+	// Do something
+	Execute func(http.ResponseWriter, *http.Request) `json:"-"`
 }
 
-/**
-
- */
 type Listen struct {
-	Actions *list.List
-	Execute func(http.ResponseWriter, *http.Request) bool
+	// Used this listen's actions
+	Actions *list.List `json:"actions"`
+	// Result is a http function or nil
+	Execute func(http.ResponseWriter, *http.Request) func(http.ResponseWriter, *http.Request) `json:"-"`
 }
 
 func (listen Listen) include(action Action) {
+	// Link listen to action
 	action.Listens.PushBack(listen)
+	// Link action to listen
 	listen.Actions.PushBack(action)
 }

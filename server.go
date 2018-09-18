@@ -16,11 +16,20 @@ func InitServer(port int) {
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			// Execute listen list
 			for e := action.Listens.Front(); e != nil; e = e.Next() {
-				e.Value.(*Listen).Execute(writer, request)
+				// If listen is not true
+				result := e.Value.(*Listen).Execute(writer, request)
+				// If result is a function, Listen break
+				if result != nil {
+					result(writer, request)
+					break
+				}
 			}
 			// Execute action
 			action.Execute(writer, request)
 		})
 	}
+	http.HandleFunc("/info", func(writer http.ResponseWriter, request *http.Request) {
+
+	})
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
