@@ -34,14 +34,14 @@ type Listen struct {
 
 func (listen Listen) Include(action Action) {
 	// Link listen to action
-	if action.Listens == nil {
+	Nil(action.Listens, func() {
 		action.Listens = list.New()
-	}
+	})
 	action.Listens.PushBack(listen)
 
 	// Link action to listen
-	if listen.Actions == nil {
+	Nil(listen.Actions, func() {
 		listen.Actions = list.New()
-	}
+	})
 	listen.Actions.PushBack(action)
 }
