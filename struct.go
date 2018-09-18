@@ -48,7 +48,7 @@ func NewAction(name string, comment string, method string, execute Execute) Acti
 type Listen struct {
 	Name    string  `json:"name"`    //
 	Comment string  `json:"comment"` //
-	Actions Actions `json:"actions"` //
+	Actions Actions `json:"-"`       //
 	Execute ExecRet `json:"-"`       //
 }
 
