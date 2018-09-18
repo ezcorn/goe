@@ -17,6 +17,7 @@ type Config struct {
 }
 
 type Action struct {
+	Name    string            `json:"name"`
 	Method  string            `json:"method"`
 	Comment string            `json:"comment"`
 	Listens map[string]Listen `json:"listens"`
@@ -24,16 +25,18 @@ type Action struct {
 }
 
 type Listen struct {
+	Name    string            `json:"name"`
 	Comment string            `json:"comment"`
 	Actions map[string]Action `json:"actions"`
 	Execute NormFuncListen    `json:"-"`
 }
 
 func (listen Listen) Include(route string) {
-	// Link listen to action
+	// Link listen and action
 	if action, exist := GlobalAction[route]; exist {
 		// Add action to listen
 		listen.Actions[route] = action
-		action.Listens["bb"] = listen
+		// Add listen to action
+		action.Listens[listen.Name] = listen
 	}
 }
