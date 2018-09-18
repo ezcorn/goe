@@ -14,7 +14,7 @@ type ExecRet = func(http.ResponseWriter, *http.Request) Execute
 type Actions map[string]Action
 
 //
-type Listens map[string]Listen
+type Listens []Listen
 
 type Config struct {
 	Name    string  `json:"name"`    //
@@ -40,7 +40,7 @@ func NewAction(name string, comment string, method string, execute Execute) Acti
 		Name:    name,
 		Method:  method,
 		Comment: comment,
-		Listens: make(Listens),
+		Listens: Listens{},
 		Execute: execute,
 	}
 }
@@ -66,11 +66,11 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 	}
 }
 
-func Join(listen string, action string) {
-	if listenObj, exist := ListenRegistry[listen]; exist {
-		if actionObj, exist := ActionRegistry[action]; exist {
-			ListenRegistry[listen].Actions[action] = actionObj
-			ActionRegistry[action].Listens[listen] = listenObj
-		}
-	}
+func (listen Listen) Join(action string) {
+	//if listenObj, exist := ListenRegistry[listen]; exist {
+	//	if actionObj, exist := ActionRegistry[action]; exist {
+	//		ListenRegistry[listen].Actions[action] = actionObj
+	//		ActionRegistry[action].Listens[listen] = listenObj
+	//	}
+	//}
 }
