@@ -84,6 +84,7 @@ func (listen Listen) Join(action string) {
 	if actionObj, exist := ActionRegistry[action]; exist {
 		listenRegister.Actions[action] = actionObj
 		actionObj.Listens = append(actionObj.Listens, listen)
+		ActionRegistry[action] = actionObj
 	}
 	ListenRegistry[listen.Name] = listenRegister
 }
