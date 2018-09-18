@@ -73,6 +73,6 @@ func (listen Listen) Join(action string) {
 		ListenRegistry[listen] = make(Actions)
 	}
 	ListenRegistry[listen][action] = ActionRegistry[action]
-	(ActionRegistry[action]).Listens = append(ActionRegistry[action].Listens, listen)
+	// (ActionRegistry[action]).Listens = append(ActionRegistry[action].Listens, listen)
 	// ActionRegistry[action.Name] = action
 }
