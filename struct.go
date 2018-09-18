@@ -32,6 +32,17 @@ type Action struct {
 	Execute Execute `json:"-"`       //
 }
 
+type Listen struct {
+	Name    string  `json:"name"`    //
+	Comment string  `json:"comment"` //
+	Execute ExecRet `json:"-"`       //
+}
+
+type ListenRegister struct {
+	Listen  Listen  `json:"listen"`  //
+	Actions Actions `json:"actions"` //
+}
+
 func NewAction(name string, comment string, method string, execute Execute) Action {
 	if execute == nil {
 		execute = func(writer http.ResponseWriter, request *http.Request) {}
@@ -49,12 +60,6 @@ func AppendAction(action Action) {
 	ActionRegistry[action.Name] = action
 }
 
-type Listen struct {
-	Name    string  `json:"name"`    //
-	Comment string  `json:"comment"` //
-	Execute ExecRet `json:"-"`       //
-}
-
 func NewListen(name string, comment string, execute ExecRet) Listen {
 	if execute == nil {
 		execute = func(writer http.ResponseWriter, request *http.Request) Execute {
@@ -69,10 +74,15 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 }
 
 func (listen Listen) Join(action string) {
-	if ListenRegistry[listen] == nil {
-		ListenRegistry[listen] = make(Actions)
+	listenRegister, exist := ListenRegistry[listen.Name]
+	if !exist {
+		listenRegister = ListenRegister{
+			Listen:  listen,
+			Actions: make(Actions),
+		}
 	}
-	ListenRegistry[listen][action] = ActionRegistry[action]
-	// (ActionRegistry[action]).Listens = append(ActionRegistry[action].Listens, listen)
-	// ActionRegistry[action.Name] = action
+	if actionObj, exist := ActionRegistry[action]; exist {
+		listenRegister.Actions[action] = actionObj
+	}
+	ListenRegistry[listen.Name] = listenRegister
 }

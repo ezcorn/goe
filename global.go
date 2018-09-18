@@ -1,6 +1,6 @@
 package goe
 
-var ListenRegistry = make(map[Listen]map[string]Action)
+var ListenRegistry = make(map[string]ListenRegister)
 
 var ActionRegistry = make(Actions)
 
