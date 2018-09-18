@@ -32,7 +32,7 @@ type Listen struct {
 	Execute func(http.ResponseWriter, *http.Request) func(http.ResponseWriter, *http.Request) `json:"-"`
 }
 
-func (listen Listen) include(action Action) {
+func (listen Listen) Include(action Action) {
 	// Link listen to action
 	action.Listens.PushBack(listen)
 	// Link action to listen
