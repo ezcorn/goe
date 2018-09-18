@@ -39,7 +39,8 @@ type Listen struct {
 }
 
 type ListenRegister struct {
-	Listen  Listen  `json:"listen"`  //
+	Name    string  `json:"name"`    //
+	Comment string  `json:"comment"` //
 	Actions Actions `json:"actions"` //
 }
 
@@ -77,7 +78,8 @@ func (listen Listen) Join(action string) {
 	listenRegister, exist := ListenRegistry[listen.Name]
 	if !exist {
 		listenRegister = ListenRegister{
-			Listen:  listen,
+			Name:    listen.Name,
+			Comment: listen.Comment,
 			Actions: make(Actions),
 		}
 	}
