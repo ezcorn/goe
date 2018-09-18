@@ -25,7 +25,7 @@ type Config struct {
 }
 
 type Action struct {
-	Name    string  `json:"name"`    //
+	Route   string  `json:"route"`   //
 	Method  string  `json:"method"`  //
 	Comment string  `json:"comment"` //
 	Listens Listens `json:"listens"` //
@@ -43,12 +43,12 @@ type ListenRegister struct {
 	Actions Actions `json:"actions"` //
 }
 
-func NewAction(name string, comment string, method string, execute Execute) Action {
+func NewAction(route string, comment string, method string, execute Execute) Action {
 	if execute == nil {
 		execute = func(writer http.ResponseWriter, request *http.Request) {}
 	}
 	return Action{
-		Name:    name,
+		Route:   route,
 		Method:  method,
 		Comment: comment,
 		Listens: Listens{},
@@ -57,7 +57,7 @@ func NewAction(name string, comment string, method string, execute Execute) Acti
 }
 
 func AppendAction(action Action) {
-	ActionRegistry[action.Name] = action
+	ActionRegistry[action.Route] = action
 }
 
 func NewListen(name string, comment string, execute ExecRet) Listen {
