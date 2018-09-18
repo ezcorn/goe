@@ -8,18 +8,18 @@ import (
 
 func InitServer(port int) {
 	// Read goe.json file
-	json.Unmarshal(ReadFile("config.json"), &GlobalServerConfig)
+	json.Unmarshal(ReadFile("config.json"), &GlobalConfig)
 	// Init vendor task
-	initVendorTask(GlobalServerConfig.Vendor)
-	for route, action := range GlobalServerRouter {
+	initVendorTask(GlobalConfig.Vendor)
+	for route, action := range GlobalAction {
 		// Register restful api
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			// Execute listen list
-			for e := action.Listens.Front(); e != nil; e = e.Next() {
+			for _, listen := range action.Listens {
 				// If listen is not true
-				result := e.Value.(*Listen).Execute(writer, request)
-				// If result is a function, Listen break
+				result := listen.Execute(writer, request)
 				if result != nil {
+					// If result is a function, Listen break
 					result(writer, request)
 					break
 				}

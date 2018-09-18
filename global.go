@@ -1,7 +1,7 @@
 package goe
 
-var GlobalServerListen = make(map[string]Listen)
+var GlobalListen = make(map[string]Listen)
 
-var GlobalServerRouter = make(Router)
+var GlobalAction = make(map[string]Action)
 
-var GlobalServerConfig Config
+var GlobalConfig Config
