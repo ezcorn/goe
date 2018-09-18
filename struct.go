@@ -33,8 +33,10 @@ type Listen struct {
 }
 
 func (listen Listen) Include(action Action) {
+	action.Listens = list.New()
 	// Link listen to action
 	action.Listens.PushBack(listen)
+	listen.Actions = list.New()
 	// Link action to listen
 	listen.Actions.PushBack(action)
 }
