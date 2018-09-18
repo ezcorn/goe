@@ -1,8 +1,6 @@
 package goe
 
-import "container/list"
-
-var GlobalServerListen = list.New()
+var GlobalServerListen = make(map[string]Listen)
 
 var GlobalServerRouter = make(Router)
 

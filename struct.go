@@ -16,7 +16,6 @@ type Config struct {
 }
 
 type Action struct {
-	Route   string `json:"route"`
 	Method  string `json:"method"`
 	Comment string `json:"comment"`
 	// This action use listens
@@ -26,6 +25,7 @@ type Action struct {
 }
 
 type Listen struct {
+	Comment string `json:"comment"`
 	// Used this listen's actions
 	Actions *list.List `json:"actions"`
 	// Result is a http function or nil
