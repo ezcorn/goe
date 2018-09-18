@@ -45,10 +45,13 @@ func NewAction(name string, comment string, method string, execute Execute) Acti
 	}
 }
 
+func AppendAction(action Action) {
+	ActionRegistry[action.Name] = action
+}
+
 type Listen struct {
 	Name    string  `json:"name"`    //
 	Comment string  `json:"comment"` //
-	Actions Actions `json:"-"`       //
 	Execute ExecRet `json:"-"`       //
 }
 
@@ -61,16 +64,15 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 	return Listen{
 		Name:    name,
 		Comment: comment,
-		Actions: make(Actions),
 		Execute: execute,
 	}
 }
 
 func (listen Listen) Join(action string) {
-	//if listenObj, exist := ListenRegistry[listen]; exist {
-	//	if actionObj, exist := ActionRegistry[action]; exist {
-	//		ListenRegistry[listen].Actions[action] = actionObj
-	//		ActionRegistry[action].Listens[listen] = listenObj
-	//	}
-	//}
+	if ListenRegistry[listen] == nil {
+		ListenRegistry[listen] = make(Actions)
+	}
+	ListenRegistry[listen][action] = ActionRegistry[action]
+	(ActionRegistry[action]).Listens = append(ActionRegistry[action].Listens, listen)
+	// ActionRegistry[action.Name] = action
 }
