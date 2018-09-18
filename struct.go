@@ -39,6 +39,17 @@ type Listen struct {
 	Execute ExecRet `json:"-"`       //
 }
 
+func New() Listen {
+	return Listen{
+		Name:    "",
+		Comment: "",
+		Actions: make(Actions),
+		Execute: func(writer http.ResponseWriter, request *http.Request) Execute {
+			return nil
+		},
+	}
+}
+
 func Include(listen string, action string) {
 	if listenObj, exist := ListenRegistry[listen]; exist {
 		if actionObj, exist := ActionRegistry[action]; exist {
