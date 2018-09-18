@@ -39,20 +39,11 @@ type Listen struct {
 	Execute ExecRet `json:"-"`       //
 }
 
-func (listen Listen) Include(route string) {
-	// Link listen and action
-	if action, exist := GlobalAction[route]; exist {
-		// Init listen.Actions
-		if listen.Actions == nil {
-			listen.Actions = make(Actions)
+func Include(listen string, action string) {
+	if listenObj, exist := ListenRegistry[listen]; exist {
+		if actionObj, exist := ActionRegistry[action]; exist {
+			ListenRegistry[listen].Actions[action] = actionObj
+			ActionRegistry[action].Listens[listen] = listenObj
 		}
-		// Add action to listen
-		listen.Actions[route] = action
-		// Init action.Listens
-		if action.Listens == nil {
-			action.Listens = make(Listens)
-		}
-		// Add listen to action
-		action.Listens[listen.Name] = listen
 	}
 }

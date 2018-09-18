@@ -11,7 +11,7 @@ func InitServer(port int) {
 	json.Unmarshal(ReadFile("config.json"), &GlobalConfig)
 	// Init vendor task
 	initVendorTask(GlobalConfig.Vendor)
-	for route, action := range GlobalAction {
+	for route, action := range ActionRegistry {
 		// Register restful api
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			// Execute listen list
