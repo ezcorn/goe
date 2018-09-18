@@ -1,7 +1,7 @@
 package goe
 
-var ListenRegistry = make(map[string]Listen)
+var ListenRegistry = Listens{}
 
-var ActionRegistry = make(map[string]Action)
+var ActionRegistry = make(Actions)
 
 var GlobalConfig Config
