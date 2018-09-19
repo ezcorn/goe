@@ -57,7 +57,7 @@ func NewAction(route string, comment string, method string, execute Execute) Act
 	}
 }
 
-func AppendAction(action Action) {
+func RegAction(action Action) {
 	ActionRegistry[action.Route] = &action
 }
 
@@ -90,6 +90,6 @@ func (listen *Listen) Join(actionRoute string) {
 	}
 }
 
-func (action Action) Listen(listen Listen) {
-
+func (action *Action) Listen(listen Listen) {
+	action.Listens = append(action.Listens, &listen)
 }
