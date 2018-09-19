@@ -11,10 +11,10 @@ type Execute = func(http.ResponseWriter, *http.Request)
 type ExecRet = func(http.ResponseWriter, *http.Request) Execute
 
 //
-type Actions map[string]Action
+type Actions map[string]*Action
 
 //
-type Listens []Listen
+type Listens []*Listen
 
 type Config struct {
 	Name    string  `json:"name"`    //
@@ -58,7 +58,7 @@ func NewAction(route string, comment string, method string, execute Execute) Act
 }
 
 func AppendAction(action Action) {
-	ActionRegistry[action.Route] = action
+	ActionRegistry[action.Route] = &action
 }
 
 func NewListen(name string, comment string, execute ExecRet) Listen {
@@ -74,21 +74,21 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 	}
 }
 
-func (listen Listen) Join(action string) {
-	listenRegister, exist := ListenRegistry[listen.Name]
-	if !exist {
-		listenRegister = ListenRegister{
-			Name:    listen.Name,
-			Comment: listen.Comment,
-			Actions: make(Actions),
-		}
-	}
-	if actionObj, exist := ActionRegistry[action]; exist {
-		listenRegister.Actions[action] = actionObj
-		actionObj.Listens = append(actionObj.Listens, listen)
-		ActionRegistry[action] = actionObj
-	}
-	ListenRegistry[listen.Name] = listenRegister
+func (listen *Listen) Join(action string) {
+	//listenRegister, exist := ListenRegistry[listen.Name]
+	//if !exist {
+	//	listenRegister = ListenRegister{
+	//		Name:    listen.Name,
+	//		Comment: listen.Comment,
+	//		Actions: make(Actions),
+	//	}
+	//}
+	//if actionObj, exist := ActionRegistry[action]; exist {
+	//	listenRegister.Actions[action] = actionObj
+	//	actionObj.Listens = append(actionObj.Listens, listen)
+	//	ActionRegistry[action] = actionObj
+	//}
+	//ListenRegistry[listen.Name] = listenRegister
 }
 
 func (action Action) Listen(listen Listen) {
