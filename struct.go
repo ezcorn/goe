@@ -58,7 +58,8 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 	}
 }
 
-func RegAction(action *Action) {
+func RegAction(actionFunc func() *Action) {
+	action := actionFunc()
 	ActionRegistry[action.Route] = action
 }
 
@@ -75,7 +76,8 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 	}
 }
 
-func RegListen(listen *Listen) {
+func RegListen(listenFunc func() *Listen) {
+	listen := listenFunc()
 	ListenRegistry[listen.Name] = &ListenRegister{
 		Name:    listen.Name,
 		Comment: listen.Comment,
