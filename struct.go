@@ -102,16 +102,6 @@ func (listen *Listen) Append(actionRoute string) {
 	}
 }
 
-func (listenRegister *ListenRegister) Append(actionRoute string) {
-	if action, exist := ActionRegistry[actionRoute]; exist {
-		if _, exist := listenRegister.Actions[actionRoute]; exist {
-			return
-		}
-		listenRegister.Actions[actionRoute] = action
-		action.Listens = append(action.Listens, listenRegister.Listen)
-	}
-}
-
 func (action *Action) Listen(listenName string) {
 	for i := 0; i < len(action.Listens); i++ {
 		if action.Listens[i].Name == listenName {
