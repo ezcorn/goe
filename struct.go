@@ -103,5 +103,6 @@ func (action *Action) Listen(listenName string) {
 	}
 	if listenRegister, exist := ListenRegistry[listenName]; exist {
 		listenRegister.Actions[action.Route] = action
+		action.Listens = append(action.Listens, listenRegister.Listen)
 	}
 }
