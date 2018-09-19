@@ -33,7 +33,7 @@ type Action struct {
 }
 
 type Listen struct {
-	Name    string  `json:"-"`       //
+	Name    string  `json:"name"`    //
 	Comment string  `json:"comment"` //
 	Execute ExecRet `json:"-"`       //
 }
@@ -75,7 +75,7 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 	}
 }
 
-func (listen *Listen) Join(actionRoute string) {
+func (listen *Listen) Append(actionRoute string) {
 	listenRegister, exist := ListenRegistry[listen.Name]
 	if !exist {
 		listenRegister = &ListenRegister{
@@ -92,6 +92,13 @@ func (listen *Listen) Join(actionRoute string) {
 	}
 }
 
-func (action *Action) Listen(listen Listen) {
-	action.Listens = append(action.Listens, &listen)
+func (action *Action) Listen(listenName string) {
+	for i := 0; i < len(action.Listens); i++ {
+		if action.Listens[i].Name == listenName {
+			return
+		}
+	}
+	if listenRegister, exist := ListenRegistry[listenName]; exist {
+		listenRegister.Actions[action.Route] = action
+	}
 }
