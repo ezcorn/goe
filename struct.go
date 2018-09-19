@@ -26,8 +26,8 @@ type Config struct {
 
 type Action struct {
 	Route   string  `json:"-"`       //
-	Method  string  `json:"method"`  //
 	Comment string  `json:"comment"` //
+	Method  string  `json:"method"`  //
 	Listens Listens `json:"listens"` //
 	Execute Execute `json:"-"`       //
 }
@@ -87,7 +87,7 @@ func RegListen(listen *Listen) {
 func (listen *Listen) Append(actionRoute string) {
 	listenRegister, exist := ListenRegistry[listen.Name]
 	if !exist {
-		RegListen(listen)
+		return
 	}
 	if action, exist := ActionRegistry[actionRoute]; exist {
 		listenRegister.Actions[actionRoute] = action
