@@ -75,20 +75,20 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 }
 
 func (listen *Listen) Join(action string) {
-	//listenRegister, exist := ListenRegistry[listen.Name]
-	//if !exist {
-	//	listenRegister = ListenRegister{
-	//		Name:    listen.Name,
-	//		Comment: listen.Comment,
-	//		Actions: make(Actions),
-	//	}
-	//}
-	//if actionObj, exist := ActionRegistry[action]; exist {
-	//	listenRegister.Actions[action] = actionObj
-	//	actionObj.Listens = append(actionObj.Listens, listen)
-	//	ActionRegistry[action] = actionObj
-	//}
-	//ListenRegistry[listen.Name] = listenRegister
+	listenRegister, exist := ListenRegistry[listen.Name]
+	if !exist {
+		listenRegister = &ListenRegister{
+			Name:    listen.Name,
+			Comment: listen.Comment,
+			Actions: make(Actions),
+		}
+	}
+	if actionObj, exist := ActionRegistry[action]; exist {
+		listenRegister.Actions[action] = actionObj
+		//listenRegister.Actions[action] = actionObj
+		//actionObj.Listens = append(actionObj.Listens, listen)
+		//ActionRegistry[action] = actionObj
+	}
 }
 
 func (action Action) Listen(listen Listen) {
