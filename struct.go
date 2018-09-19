@@ -45,11 +45,11 @@ type ListenRegister struct {
 	Listen  *Listen `json:"-"`       //
 }
 
-func NewAction(route string, comment string, method string, execute Execute) Action {
+func NewAction(route string, comment string, method string, execute Execute) *Action {
 	if execute == nil {
 		execute = func(writer http.ResponseWriter, request *http.Request) {}
 	}
-	return Action{
+	return &Action{
 		Route:   route,
 		Method:  method,
 		Comment: comment,
@@ -58,33 +58,36 @@ func NewAction(route string, comment string, method string, execute Execute) Act
 	}
 }
 
-func RegAction(action Action) {
-	ActionRegistry[action.Route] = &action
+func RegAction(action *Action) {
+	ActionRegistry[action.Route] = action
 }
 
-func NewListen(name string, comment string, execute ExecRet) Listen {
+func NewListen(name string, comment string, execute ExecRet) *Listen {
 	if execute == nil {
 		execute = func(writer http.ResponseWriter, request *http.Request) Execute {
 			return nil
 		}
 	}
-	return Listen{
+	return &Listen{
 		Name:    name,
 		Comment: comment,
 		Execute: execute,
 	}
 }
 
+func RegListen(listen *Listen) {
+	ListenRegistry[listen.Name] = &ListenRegister{
+		Name:    listen.Name,
+		Comment: listen.Comment,
+		Actions: make(Actions),
+		Listen:  listen,
+	}
+}
+
 func (listen *Listen) Append(actionRoute string) {
 	listenRegister, exist := ListenRegistry[listen.Name]
 	if !exist {
-		listenRegister = &ListenRegister{
-			Name:    listen.Name,
-			Comment: listen.Comment,
-			Actions: make(Actions),
-			Listen:  listen,
-		}
-		ListenRegistry[listen.Name] = listenRegister
+		RegListen(listen)
 	}
 	if action, exist := ActionRegistry[actionRoute]; exist {
 		listenRegister.Actions[actionRoute] = action
