@@ -25,7 +25,7 @@ type Config struct {
 }
 
 type Action struct {
-	Route   string  `json:"route"`   //
+	Route   string  `json:"-"`       //
 	Method  string  `json:"method"`  //
 	Comment string  `json:"comment"` //
 	Listens Listens `json:"listens"` //
@@ -33,15 +33,16 @@ type Action struct {
 }
 
 type Listen struct {
-	Name    string  `json:"name"`    //
+	Name    string  `json:"-"`       //
 	Comment string  `json:"comment"` //
 	Execute ExecRet `json:"-"`       //
 }
 
 type ListenRegister struct {
-	Name    string  `json:"name"`    //
+	Name    string  `json:"-"`       //
 	Comment string  `json:"comment"` //
 	Actions Actions `json:"actions"` //
+	Listen  *Listen `json:"-"`       //
 }
 
 func NewAction(route string, comment string, method string, execute Execute) Action {
@@ -81,6 +82,7 @@ func (listen *Listen) Join(actionRoute string) {
 			Name:    listen.Name,
 			Comment: listen.Comment,
 			Actions: make(Actions),
+			Listen:  listen,
 		}
 		ListenRegistry[listen.Name] = listenRegister
 	}
