@@ -58,7 +58,7 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 	}
 }
 
-func RegAction(new func() *Action, last func(*Action)) {
+func RegAction(new func() *Action, last func(a *Action)) {
 	action := new()
 	ActionRegistry[action.Route] = action
 	last(action)
@@ -77,7 +77,7 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 	}
 }
 
-func RegListen(new func() *Listen, last func(*Listen)) {
+func RegListen(new func() *Listen, last func(l *Listen)) {
 	listen := new()
 	ListenRegistry[listen.Name] = &ListenRegister{
 		Name:    listen.Name,
