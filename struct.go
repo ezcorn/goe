@@ -74,7 +74,7 @@ func NewListen(name string, comment string, execute ExecRet) Listen {
 	}
 }
 
-func (listen *Listen) Join(action string) {
+func (listen *Listen) Join(actionRoute string) {
 	listenRegister, exist := ListenRegistry[listen.Name]
 	if !exist {
 		listenRegister = &ListenRegister{
@@ -82,12 +82,11 @@ func (listen *Listen) Join(action string) {
 			Comment: listen.Comment,
 			Actions: make(Actions),
 		}
+		ListenRegistry[listen.Name] = listenRegister
 	}
-	if actionObj, exist := ActionRegistry[action]; exist {
-		listenRegister.Actions[action] = actionObj
-		//listenRegister.Actions[action] = actionObj
-		//actionObj.Listens = append(actionObj.Listens, listen)
-		//ActionRegistry[action] = actionObj
+	if action, exist := ActionRegistry[actionRoute]; exist {
+		listenRegister.Actions[actionRoute] = action
+		action.Listens = append(action.Listens, listen)
 	}
 }
 
