@@ -90,6 +90,9 @@ func (listen *Listen) Append(actionRoute string) {
 		return
 	}
 	if action, exist := ActionRegistry[actionRoute]; exist {
+		if _, exist := listenRegister.Actions[actionRoute]; exist {
+			return
+		}
 		listenRegister.Actions[actionRoute] = action
 		action.Listens = append(action.Listens, listen)
 	}
@@ -97,6 +100,9 @@ func (listen *Listen) Append(actionRoute string) {
 
 func (listenRegister *ListenRegister) Append(actionRoute string) {
 	if action, exist := ActionRegistry[actionRoute]; exist {
+		if _, exist := listenRegister.Actions[actionRoute]; exist {
+			return
+		}
 		listenRegister.Actions[actionRoute] = action
 		action.Listens = append(action.Listens, listenRegister.Listen)
 	}
