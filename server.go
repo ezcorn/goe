@@ -8,10 +8,10 @@ import (
 
 func InitServer(port int) {
 	// Read goe.json file
-	json.Unmarshal(ReadFile("config.json"), &GlobalConfig)
+	json.Unmarshal(readFile("config.json"), &serverConfig)
 	// Init vendor task
-	initVendorTask(GlobalConfig.Vendor)
-	for route, action := range ActionRegistry {
+	initVendorTask(serverConfig.Vendor)
+	for route, action := range actionRegistry {
 		// Register restful api
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			// Execute listen list

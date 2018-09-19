@@ -5,6 +5,18 @@ import (
 )
 
 //
+var serverConfig Config
+
+//
+var registerRuntime = make(map[string][]func())
+
+//
+var listenRegistry = make(map[string]*ListenRegister)
+
+//
+var actionRegistry = make(Actions)
+
+//
 type Execute = func(http.ResponseWriter, *http.Request)
 
 //
@@ -60,7 +72,7 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 
 func RegAction(new func() *Action, last func(a *Action)) {
 	action := new()
-	ActionRegistry[action.Route] = action
+	actionRegistry[action.Route] = action
 	last(action)
 }
 
@@ -79,7 +91,7 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 
 func RegListen(new func() *Listen, last func(l *Listen)) {
 	listen := new()
-	ListenRegistry[listen.Name] = &ListenRegister{
+	listenRegistry[listen.Name] = &ListenRegister{
 		Name:    listen.Name,
 		Comment: listen.Comment,
 		Actions: make(Actions),
@@ -89,11 +101,11 @@ func RegListen(new func() *Listen, last func(l *Listen)) {
 }
 
 func (listen *Listen) Append(actionRoute string) {
-	listenRegister, exist := ListenRegistry[listen.Name]
+	listenRegister, exist := listenRegistry[listen.Name]
 	if !exist {
 		return
 	}
-	if action, exist := ActionRegistry[actionRoute]; exist {
+	if action, exist := actionRegistry[actionRoute]; exist {
 		if _, exist := listenRegister.Actions[actionRoute]; exist {
 			return
 		}
@@ -108,7 +120,7 @@ func (action *Action) Listen(listenName string) {
 			return
 		}
 	}
-	if listenRegister, exist := ListenRegistry[listenName]; exist {
+	if listenRegister, exist := listenRegistry[listenName]; exist {
 		listenRegister.Actions[action.Route] = action
 		action.Listens = append(action.Listens, listenRegister.Listen)
 	}
