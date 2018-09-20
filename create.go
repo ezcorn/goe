@@ -57,7 +57,7 @@ func RegListen(new func() *Listen, relate func(l *Listen)) {
 	}
 }
 
-func RegStatus(code int, f func() string) {
+func RegStatus(code int, f func(int) string) {
 	if f != nil {
 		joinRuntime(runtimeStatus, func() {
 			statusRegistry[code] = f

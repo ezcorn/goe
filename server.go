@@ -12,9 +12,11 @@ func InitServer(port int) {
 	// initVendorTask(serverConfig.Vendor)
 
 	// TODO: Register default state print
-	RegStatus(http.StatusNotFound, func() string {
-		return string(http.StatusNotFound)
-	})
+	for i := 0; i < len(httpStatus); i++ {
+		RegStatus(httpStatus[i], func(code int) string {
+			return strconv.Itoa(code) + " " + http.StatusText(code)
+		})
+	}
 
 	// TODO: Exec runtime function
 	queue := []string{runtimeStatus, runtimeListen, runtimeAction, runtimeRelate}
@@ -56,7 +58,7 @@ func InitServer(port int) {
 func httpState(writer http.ResponseWriter, code int) {
 	if f, ok := statusRegistry[code]; ok {
 		if f != nil {
-			http.Error(writer, f(), code)
+			http.Error(writer, f(code), code)
 			return
 		}
 	}
