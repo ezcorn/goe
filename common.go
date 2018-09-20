@@ -1,6 +1,7 @@
 package goe
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -22,4 +23,10 @@ func gitClone(repo string, name string) {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func jsonEncode(v interface{}) string {
+	var data []byte
+	json.Unmarshal(data, v)
+	return string(data)
 }

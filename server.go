@@ -1,6 +1,7 @@
 package goe
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -20,6 +21,7 @@ func InitServer(port int) {
 
 	// TODO: Register to handle
 	for route, action := range actionRegistry {
+		log.Println(jsonEncode(action))
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			for _, listen := range action.Listens {
 				result := listen.Execute(writer, request)
