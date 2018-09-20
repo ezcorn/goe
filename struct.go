@@ -78,14 +78,14 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 
 func RegAction(new func() *Action, add func(a *Action)) {
 	action := new()
-	registerRuntime[runtimeReg] =
-		append(registerRuntime[runtimeReg], func() {
+	if new != nil {
+		joinRuntime(runtimeReg, func() {
 			actionRegistry[action.Route] = action
 		})
-	registerRuntime[runtimeAdd] =
-		append(registerRuntime[runtimeAdd], func() {
-			add(action)
-		})
+		if add != nil {
+			joinRuntime(runtimeReg, func() { add(action) })
+		}
+	}
 }
 
 func NewListen(name string, comment string, execute ExecRet) *Listen {
@@ -103,8 +103,8 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 
 func RegListen(new func() *Listen, add func(l *Listen)) {
 	listen := new()
-	registerRuntime[runtimeReg] =
-		append(registerRuntime[runtimeReg], func() {
+	if new != nil {
+		joinRuntime(runtimeAdd, func() {
 			listenRegistry[listen.Name] = &ListenRegister{
 				Name:    listen.Name,
 				Comment: listen.Comment,
@@ -112,10 +112,10 @@ func RegListen(new func() *Listen, add func(l *Listen)) {
 				Listen:  listen,
 			}
 		})
-	registerRuntime[runtimeAdd] =
-		append(registerRuntime[runtimeAdd], func() {
-			add(listen)
-		})
+		if add != nil {
+			joinRuntime(runtimeAdd, func() { add(listen) })
+		}
+	}
 }
 
 func (listen *Listen) Append(actionRoute string) {

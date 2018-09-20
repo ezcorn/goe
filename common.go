@@ -16,6 +16,7 @@ func readFile(fn string) []byte {
 	return buf
 }
 
+//
 func gitClone(repo string, name string) {
 	os.RemoveAll(name)
 	_, err := exec.Command("git", "clone", repo, name).Output()
@@ -25,7 +26,13 @@ func gitClone(repo string, name string) {
 	}
 }
 
+//
 func jsonEncode(v interface{}) string {
 	b, _ := json.Marshal(v)
 	return string(b)
+}
+
+//
+func joinRuntime(t string, f func()) {
+	registerRuntime[t] = append(registerRuntime[t], f)
 }
