@@ -1,15 +1,14 @@
 package goe
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 )
 
 func InitServer(port int) {
 	// TODO: Read config file
-	json.Unmarshal(readFile("config.json"), &serverConfig)
-	initVendorTask(serverConfig.Vendor)
+	// json.Unmarshal(readFile("config.json"), &serverConfig)
+	// initVendorTask(serverConfig.Vendor)
 
 	// TODO: Exec runtime function
 	queue := []string{runtimeReg, runtimeAdd}
