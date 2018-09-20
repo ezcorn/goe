@@ -21,7 +21,7 @@ func InitServer(port int) {
 
 	// TODO: Register to handle
 	for route, action := range actionRegistry {
-		log.Println(`Register action["` + route + `"]\t` + jsonEncode(action))
+		log.Println(`Action["` + route + `"]` + "\t" + jsonEncode(action))
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			for _, listen := range action.Listens {
 				result := listen.Execute(writer, request)
