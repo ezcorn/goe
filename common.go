@@ -26,7 +26,6 @@ func gitClone(repo string, name string) {
 }
 
 func jsonEncode(v interface{}) string {
-	var data []byte
-	json.Unmarshal(data, v)
-	return string(data)
+	b, _ := json.Marshal(v)
+	return string(b)
 }
