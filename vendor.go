@@ -6,9 +6,9 @@ import (
 
 const vendor = "vendor"
 
-type Input interface{}
-
-type Output interface{}
+//type Input interface{}
+//
+//type Output interface{}
 
 func initVendorTask(repository string) {
 	gitClone(repository, vendor)
@@ -21,6 +21,6 @@ func initVendorTask(repository string) {
 	}()
 }
 
-func CallVendor(vendorName string, actionRoute string, input Input) Output {
+func CallVendor(vendorName string, actionRoute string, input interface{}) interface{} {
 	return nil
 }
