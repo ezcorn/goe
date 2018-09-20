@@ -12,16 +12,16 @@ func InitServer(port int) {
 	// initVendorTask(serverConfig.Vendor)
 
 	// TODO: Exec runtime function
-	queue := []string{runtimeReg, runtimeAdd}
+	queue := []string{runtimeListen, runtimeAction, runtimeAppend}
 	for i := 0; i < len(queue); i++ {
-		for j := 0; j < len(registerRuntime[runtimeReg]); j++ {
+		for j := 0; j < len(registerRuntime[queue[i]]); j++ {
 			registerRuntime[queue[i]][j]()
 		}
 	}
 
 	// TODO: Register to handle
 	for route, action := range actionRegistry {
-		log.Println(`Action["` + route + `"]` + "\t\t" + jsonEncode(action))
+		log.Println(`Action["` + route + `"]` + jsonEncode(action))
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
 			for _, listen := range action.Listens {
 				result := listen.Execute(writer, request)

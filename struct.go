@@ -5,10 +5,13 @@ import (
 )
 
 //
-const runtimeReg = "reg"
+const runtimeAction = "action"
 
 //
-const runtimeAdd = "add"
+const runtimeListen = "listen"
+
+//
+const runtimeAppend = "append"
 
 //
 var registerRuntime = make(map[string][]func())
@@ -44,8 +47,8 @@ type Config struct {
 
 type Action struct {
 	Route   string  `json:"-"`       //
-	Comment string  `json:"comment"` //
 	Method  string  `json:"method"`  //
+	Comment string  `json:"comment"` //
 	Listens Listens `json:"listens"` //
 	Execute Execute `json:"-"`       //
 }
@@ -76,14 +79,14 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 	}
 }
 
-func RegAction(new func() *Action, add func(a *Action)) {
+func RegAction(new func() *Action, append func(a *Action)) {
 	action := new()
 	if new != nil {
-		joinRuntime(runtimeReg, func() {
+		joinRuntime(runtimeAction, func() {
 			actionRegistry[action.Route] = action
 		})
-		if add != nil {
-			joinRuntime(runtimeReg, func() { add(action) })
+		if append != nil {
+			joinRuntime(runtimeAppend, func() { append(action) })
 		}
 	}
 }
@@ -101,10 +104,10 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 	}
 }
 
-func RegListen(new func() *Listen, add func(l *Listen)) {
+func RegListen(new func() *Listen, append func(l *Listen)) {
 	listen := new()
 	if new != nil {
-		joinRuntime(runtimeAdd, func() {
+		joinRuntime(runtimeListen, func() {
 			listenRegistry[listen.Name] = &ListenRegister{
 				Name:    listen.Name,
 				Comment: listen.Comment,
@@ -112,8 +115,8 @@ func RegListen(new func() *Listen, add func(l *Listen)) {
 				Listen:  listen,
 			}
 		})
-		if add != nil {
-			joinRuntime(runtimeAdd, func() { add(listen) })
+		if append != nil {
+			joinRuntime(runtimeAppend, func() { append(listen) })
 		}
 	}
 }
