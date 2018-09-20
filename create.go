@@ -2,16 +2,16 @@ package goe
 
 import "net/http"
 
-func NewAction(route string, comment string, method string, execute Execute) *Action {
-	if execute == nil {
-		execute = func(writer http.ResponseWriter, request *http.Request) {}
+func NewAction(route string, comment string, method []string, program Program) *Action {
+	if program == nil {
+		program = func(w http.ResponseWriter, r *http.Request) {}
 	}
 	return &Action{
 		Route:   route,
 		Method:  method,
 		Comment: comment,
 		Listens: Listens{},
-		Execute: execute,
+		Program: program,
 	}
 }
 
@@ -27,16 +27,16 @@ func RegAction(new func() *Action, relate func(a *Action)) {
 	}
 }
 
-func NewListen(name string, comment string, execute ExecRet) *Listen {
-	if execute == nil {
-		execute = func(writer http.ResponseWriter, request *http.Request) Execute {
+func NewListen(name string, comment string, process Process) *Listen {
+	if process == nil {
+		process = func(w http.ResponseWriter, r *http.Request) Program {
 			return nil
 		}
 	}
 	return &Listen{
 		Name:    name,
 		Comment: comment,
-		Execute: execute,
+		Process: process,
 	}
 }
 

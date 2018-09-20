@@ -36,3 +36,12 @@ func jsonEncode(v interface{}) string {
 func joinRuntime(t string, f func()) {
 	registerRuntime[t] = append(registerRuntime[t], f)
 }
+
+func strArrContains(arr []string, s string) bool {
+	for _, a := range arr {
+		if a == s {
+			return true
+		}
+	}
+	return false
+}

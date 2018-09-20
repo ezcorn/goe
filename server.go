@@ -18,7 +18,7 @@ func InitServer(port int) {
 		})
 	}
 
-	// TODO: Exec runtime function
+	// TODO: Exec runtime
 	queue := []string{runtimeStatus, runtimeListen, runtimeAction, runtimeRelate}
 	for i := 0; i < len(queue); i++ {
 		for j := 0; j < len(registerRuntime[queue[i]]); j++ {
@@ -26,41 +26,45 @@ func InitServer(port int) {
 		}
 	}
 
-	// TODO: Register to handle
-	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		if action, ok := actionRegistry[request.URL.Path]; ok {
+	// TODO: Goe framework
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if action, ok := actionRegistry[r.URL.Path]; ok {
 			// TODO: Check listen
-			if request.Method == action.Method {
+			if strArrContains(action.Method, r.Method) {
 				for _, listen := range action.Listens {
-					result := listen.Execute(writer, request)
+					result := listen.Process(w, r)
 					if result != nil {
-						result(writer, request)
+						result(w, r)
 						break
 					}
 				}
-				// TODO: Execute action
-				action.Execute(writer, request)
+				// TODO: Exec action
+				action.Program(w, r)
 				return
 			}
 		}
-		httpState(writer, http.StatusNotFound)
+		httpState(w, http.StatusNotFound)
 	})
 
 	// TODO: Register goe apis
-	http.HandleFunc("/info", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprintf(writer, "info")
+	http.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "info")
 	})
 
 	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
 
-func httpState(writer http.ResponseWriter, code int) {
+func httpState(w http.ResponseWriter, code int) {
 	if f, ok := statusRegistry[code]; ok {
 		if f != nil {
-			http.Error(writer, f(code), code)
+			http.Error(w, f(code), code)
 			return
 		}
 	}
-	httpState(writer, http.StatusNotFound)
+	httpState(w, http.StatusNotFound)
+}
+
+func Echo(w http.ResponseWriter, content string) {
+	fmt.Fprintf(w, content)
 }

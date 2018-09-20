@@ -41,16 +41,19 @@ var listenRegistry = make(map[string]*ListenRegister)
 var actionRegistry = make(Actions)
 
 //
-type Execute = func(http.ResponseWriter, *http.Request)
+type Program = func(w http.ResponseWriter, r *http.Request)
 
 //
-type ExecRet = func(http.ResponseWriter, *http.Request) Execute
+type Process = func(w http.ResponseWriter, r *http.Request) Program
 
 //
 type Actions map[string]*Action
 
 //
 type Listens []*Listen
+
+//
+type Methods = []string
 
 type Config struct {
 	Name    string  `json:"name"`    //
@@ -62,16 +65,16 @@ type Config struct {
 
 type Action struct {
 	Route   string  `json:"-"`       //
-	Method  string  `json:"method"`  //
+	Method  Methods `json:"method"`  //
 	Comment string  `json:"comment"` //
 	Listens Listens `json:"listens"` //
-	Execute Execute `json:"-"`       //
+	Program Program `json:"-"`       //
 }
 
 type Listen struct {
 	Name    string  `json:"name"`    //
 	Comment string  `json:"comment"` //
-	Execute ExecRet `json:"-"`       //
+	Process Process `json:"-"`       //
 }
 
 type ListenRegister struct {
