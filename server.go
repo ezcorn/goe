@@ -7,29 +7,37 @@ import (
 )
 
 func InitServer(port int) {
-	// Read goe.json file
+	// TODO: Read config file
 	json.Unmarshal(readFile("config.json"), &serverConfig)
-	// Init vendor task
 	initVendorTask(serverConfig.Vendor)
+
+	// TODO: Exec runtime function
+	queue := []string{runtimeReg, runtimeAdd}
+	for i := 0; i < len(queue); i++ {
+		for j := 0; j < len(registerRuntime[runtimeReg]); j++ {
+			registerRuntime[queue[i]][j]()
+		}
+	}
+
+	// TODO: Register to handle
 	for route, action := range actionRegistry {
-		// Register restful api
 		http.HandleFunc(route, func(writer http.ResponseWriter, request *http.Request) {
-			// Execute listen list
 			for _, listen := range action.Listens {
-				// If listen is not true
 				result := listen.Execute(writer, request)
 				if result != nil {
-					// If result is a function, Listen break
 					result(writer, request)
 					break
 				}
 			}
-			// Execute action
 			action.Execute(writer, request)
 		})
 	}
+
+	// TODO: Register goe apis
 	http.HandleFunc("/info", func(writer http.ResponseWriter, request *http.Request) {
 
 	})
+
+	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }

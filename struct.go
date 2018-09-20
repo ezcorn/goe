@@ -5,10 +5,16 @@ import (
 )
 
 //
-var serverConfig Config
+const runtimeReg = "reg"
+
+//
+const runtimeAdd = "add"
 
 //
 var registerRuntime = make(map[string][]func())
+
+//
+var serverConfig Config
 
 //
 var listenRegistry = make(map[string]*ListenRegister)
@@ -70,10 +76,16 @@ func NewAction(route string, comment string, method string, execute Execute) *Ac
 	}
 }
 
-func RegAction(new func() *Action, last func(a *Action)) {
+func RegAction(new func() *Action, add func(a *Action)) {
 	action := new()
-	actionRegistry[action.Route] = action
-	last(action)
+	registerRuntime[runtimeReg] =
+		append(registerRuntime[runtimeReg], func() {
+			actionRegistry[action.Route] = action
+		})
+	registerRuntime[runtimeAdd] =
+		append(registerRuntime[runtimeAdd], func() {
+			add(action)
+		})
 }
 
 func NewListen(name string, comment string, execute ExecRet) *Listen {
@@ -89,15 +101,21 @@ func NewListen(name string, comment string, execute ExecRet) *Listen {
 	}
 }
 
-func RegListen(new func() *Listen, last func(l *Listen)) {
+func RegListen(new func() *Listen, add func(l *Listen)) {
 	listen := new()
-	listenRegistry[listen.Name] = &ListenRegister{
-		Name:    listen.Name,
-		Comment: listen.Comment,
-		Actions: make(Actions),
-		Listen:  listen,
-	}
-	last(listen)
+	registerRuntime[runtimeReg] =
+		append(registerRuntime[runtimeReg], func() {
+			listenRegistry[listen.Name] = &ListenRegister{
+				Name:    listen.Name,
+				Comment: listen.Comment,
+				Actions: make(Actions),
+				Listen:  listen,
+			}
+		})
+	registerRuntime[runtimeAdd] =
+		append(registerRuntime[runtimeAdd], func() {
+			add(listen)
+		})
 }
 
 func (listen *Listen) Append(actionRoute string) {
