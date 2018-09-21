@@ -8,23 +8,11 @@ import (
 
 func InitServer(port int) {
 	// TODO: Read config file
-	// json.Unmarshal(readFile("config.json"), &serverConfig)
-	// initVendorTask(serverConfig.Vendor)
-
+	initServerConfig()
 	// TODO: Register default state print
-	for i := 0; i < len(httpStatus); i++ {
-		RegStatus(httpStatus[i], func(code int) string {
-			return strconv.Itoa(code) + " " + http.StatusText(code)
-		})
-	}
-
+	initServerStatus()
 	// TODO: Exec runtime
-	queue := []string{runtimeStatus, runtimeListen, runtimeAction, runtimeRelate}
-	for i := 0; i < len(queue); i++ {
-		for j := 0; j < len(registerRuntime[queue[i]]); j++ {
-			registerRuntime[queue[i]][j]()
-		}
-	}
+	initServerManage()
 
 	// TODO: Goe framework
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -53,18 +41,4 @@ func InitServer(port int) {
 
 	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
-}
-
-func httpState(w http.ResponseWriter, code int) {
-	if f, ok := statusRegistry[code]; ok {
-		if f != nil {
-			http.Error(w, f(code), code)
-			return
-		}
-	}
-	httpState(w, http.StatusNotFound)
-}
-
-func Echo(w http.ResponseWriter, content string) {
-	fmt.Fprintf(w, content)
 }
