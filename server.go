@@ -1,7 +1,6 @@
 package goe
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -35,9 +34,7 @@ func InitServer(port int) {
 	})
 
 	// TODO: Register goe apis
-	http.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "info")
-	})
+	initServerSentry()
 
 	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
