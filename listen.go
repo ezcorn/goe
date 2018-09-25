@@ -1,7 +1,5 @@
 package goe
 
-import "net/http"
-
 //
 var listenRegistry = make(map[string]*ListenRegister)
 
@@ -9,7 +7,7 @@ var listenRegistry = make(map[string]*ListenRegister)
 type Listens []*Listen
 
 //
-type Process = func(w http.ResponseWriter, r *http.Request) Program
+type Process = func(in In) Program
 
 type Listen struct {
 	Name    string  `json:"name"`    //
@@ -40,9 +38,7 @@ func (listen *Listen) Relate(actionRoute string) {
 
 func NewListen(name string, comment string, process Process) *Listen {
 	if process == nil {
-		process = func(w http.ResponseWriter, r *http.Request) Program {
-			return nil
-		}
+		process = func(in In) Program { return nil }
 	}
 	return &Listen{
 		Name:    name,

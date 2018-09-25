@@ -1,7 +1,5 @@
 package goe
 
-import "net/http"
-
 //
 var actionRegistry = make(Actions)
 
@@ -9,7 +7,7 @@ var actionRegistry = make(Actions)
 type Actions map[string]*Action
 
 //
-type Program = func(w http.ResponseWriter, r *http.Request)
+type Program = func(in In, out Out)
 
 //
 type Methods = []string
@@ -34,9 +32,18 @@ func (action *Action) Relate(listenName string) {
 	}
 }
 
+func (action *Action) MethodContains(method string) bool {
+	for _, v := range action.Method {
+		if v == method {
+			return true
+		}
+	}
+	return false
+}
+
 func NewAction(route string, comment string, method []string, program Program) *Action {
 	if program == nil {
-		program = func(w http.ResponseWriter, r *http.Request) {}
+		program = func(in In, out Out) {}
 	}
 	return &Action{
 		Route:   route,

@@ -23,16 +23,6 @@ func initServerStatus() {
 	}
 }
 
-func httpState(w http.ResponseWriter, code int) {
-	if f, ok := statusRegistry[code]; ok {
-		if f != nil {
-			http.Error(w, f(code), code)
-			return
-		}
-	}
-	httpState(w, http.StatusNotFound)
-}
-
 func RegStatus(code int, f func(int) string) {
 	if f != nil {
 		joinManage(manageStatus, func() {

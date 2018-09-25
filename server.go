@@ -1,8 +1,6 @@
 package goe
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -16,23 +14,25 @@ func InitServer(port int) {
 	initServerManage()
 
 	// TODO: Goe framework
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if action, ok := actionRegistry[r.URL.Path]; ok {
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		out := Out{w: writer}
+		if action, ok := actionRegistry[request.URL.Path]; ok {
+			in := In{r: request}
 			// TODO: Check listen
-			if arrContainsStr(action.Method, r.Method) {
+			if action.MethodContains(request.Method) {
 				for _, listen := range action.Listens {
-					result := listen.Process(w, r)
+					result := listen.Process(in)
 					if result != nil {
-						result(w, r)
-						break
+						result(in, out)
+						return
 					}
 				}
 				// TODO: Exec action
-				action.Program(w, r)
+				action.Program(in, out)
 				return
 			}
 		}
-		httpState(w, http.StatusNotFound)
+		out.Status(http.StatusNotFound)
 	})
 
 	// TODO: Register goe apis
@@ -40,22 +40,4 @@ func InitServer(port int) {
 
 	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
-}
-
-func arrContainsStr(arr []string, s string) bool {
-	for _, a := range arr {
-		if a == s {
-			return true
-		}
-	}
-	return false
-}
-
-func Echo(w http.ResponseWriter, content string) {
-	fmt.Fprintf(w, content)
-}
-
-func JsonEncode(v interface{}) string {
-	b, _ := json.Marshal(v)
-	return string(b)
 }
