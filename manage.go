@@ -1,22 +1,30 @@
 package goe
 
 //
-const runtimeStatus = "status"
+var serverManage = make(map[string][]func())
 
 //
-const runtimeAction = "action"
+const manageStatus = "status"
 
 //
-const runtimeListen = "listen"
+const manageListen = "listen"
 
 //
-const runtimeRelate = "relate"
+const manageAction = "action"
+
+//
+const manageRelate = "relate"
 
 func initServerManage() {
-	queue := []string{runtimeStatus, runtimeListen, runtimeAction, runtimeRelate}
+	queue := []string{manageStatus, manageListen, manageAction, manageRelate}
 	for i := 0; i < len(queue); i++ {
-		for j := 0; j < len(registerRuntime[queue[i]]); j++ {
-			registerRuntime[queue[i]][j]()
+		for j := 0; j < len(serverManage[queue[i]]); j++ {
+			serverManage[queue[i]][j]()
 		}
 	}
+}
+
+//
+func joinManage(t string, f func()) {
+	serverManage[t] = append(serverManage[t], f)
 }

@@ -1,6 +1,8 @@
 package goe
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -17,7 +19,7 @@ func InitServer(port int) {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if action, ok := actionRegistry[r.URL.Path]; ok {
 			// TODO: Check listen
-			if strArrContains(action.Method, r.Method) {
+			if arrContainsStr(action.Method, r.Method) {
 				for _, listen := range action.Listens {
 					result := listen.Process(w, r)
 					if result != nil {
@@ -38,4 +40,22 @@ func InitServer(port int) {
 
 	// TODO: Start server
 	http.ListenAndServe(":"+strconv.Itoa(port), nil)
+}
+
+func arrContainsStr(arr []string, s string) bool {
+	for _, a := range arr {
+		if a == s {
+			return true
+		}
+	}
+	return false
+}
+
+func Echo(w http.ResponseWriter, content string) {
+	fmt.Fprintf(w, content)
+}
+
+func JsonEncode(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
 }

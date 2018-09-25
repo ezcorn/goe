@@ -6,6 +6,9 @@ import (
 )
 
 //
+var statusRegistry = make(map[int]func(int) string)
+
+//
 var httpStatus = []int{
 	100,
 	101,
@@ -85,4 +88,12 @@ func httpState(w http.ResponseWriter, code int) {
 		}
 	}
 	httpState(w, http.StatusNotFound)
+}
+
+func RegStatus(code int, f func(int) string) {
+	if f != nil {
+		joinManage(manageStatus, func() {
+			statusRegistry[code] = f
+		})
+	}
 }
