@@ -1,29 +1,44 @@
 package goe
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 )
+
+const name = "config.json"
 
 //
 var serverConfig Config
 
 type Config struct {
-	Name    string  `json:"name"`    //
-	Author  string  `json:"author"`  //
-	Gateway string  `json:"gateway"` //
-	Vendor  string  `json:"vendor"`  //
-	Actions Actions `json:"actions"` //
+	Detail  Vendor   `json:"detail"`
+	Slaves  []Node   `json:"slaves"`
+	Actions Actions  `json:"actions"`
+	Vendor  []Vendor `json:"vendor"`
+	DNS     string   `json:"dns"`
 }
 
 func initServerConfig() {
+	buf, err := ioutil.ReadFile(name)
+	if err != nil {
+		log.Fatalln("Config not found")
+	}
+	serverConfig = Config{}
+	err = json.Unmarshal(buf, &serverConfig)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
+
+func (config Config) addSlave(host string, port int) {
 
 }
 
-func readFile(fn string) []byte {
-	buf, err := ioutil.ReadFile(fn)
-	if err != nil {
-		log.Panicln("File not found " + fn)
-	}
-	return buf
+func (config Config) addAction(action Action) {
+
+}
+
+func (config Config) addVendor(name string, master string) {
+
 }

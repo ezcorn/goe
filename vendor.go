@@ -9,6 +9,12 @@ import (
 
 const vendor = "vendor"
 
+type Vendor struct {
+	Name   string `json:"name"`
+	Author string `json:"author"`
+	Master Node   `json:"master"`
+}
+
 //type Input interface{}
 //
 //type Output interface{}
