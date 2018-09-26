@@ -14,7 +14,7 @@ type Server struct {
 	Vendors map[string]*Server `json:"-"`    // 供应商服务
 }
 
-func InitServer() {
+func InitServer(port int) {
 	// TODO: Register default state print
 	initServerStatus()
 	// TODO: Exec runtime
@@ -48,5 +48,5 @@ func InitServer() {
 	initVendorTask()
 
 	// TODO: Start server
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":80"+strconv.Itoa(port), nil)
 }
