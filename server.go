@@ -48,5 +48,5 @@ func InitServer(port int) {
 	initVendorTask()
 
 	// TODO: Start server
-	http.ListenAndServe(":80"+strconv.Itoa(port), nil)
+	http.ListenAndServe(":"+strconv.Itoa(port), nil)
 }
