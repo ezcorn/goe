@@ -2,17 +2,23 @@ package goe
 
 import (
 	"net/http"
-	"strconv"
 )
 
-func InitServer(port int) {
-	// TODO: Read config file
-	initServerConfig()
+var currentServer = Server{}
+
+type Server struct {
+	Name    string             `json:"name"` // 服务名
+	Host    string             `json:"host"` // 当前Host
+	Port    int                `json:"port"` // 当前Port
+	Servers []*Server          `json:"-"`    // 兄弟服务
+	Vendors map[string]*Server `json:"-"`    // 供应商服务
+}
+
+func InitServer() {
 	// TODO: Register default state print
 	initServerStatus()
 	// TODO: Exec runtime
 	initServerManage()
-
 	// TODO: Goe framework
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		out := Out{w: writer}
@@ -38,6 +44,9 @@ func InitServer(port int) {
 	// TODO: Register goe apis
 	initServerSentry()
 
+	// TODO: Start vendor task
+	initVendorTask()
+
 	// TODO: Start server
-	http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	http.ListenAndServe(":80", nil)
 }
