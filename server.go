@@ -2,6 +2,7 @@ package goe
 
 import (
 	"net/http"
+	"strconv"
 )
 
 var currentServer = Server{}
