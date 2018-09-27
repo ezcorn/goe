@@ -6,13 +6,14 @@ import (
 	"net/http"
 )
 
-type In struct {
-	r *http.Request
-}
-
-type Out struct {
-	w http.ResponseWriter
-}
+type (
+	In struct {
+		r *http.Request
+	}
+	Out struct {
+		w http.ResponseWriter
+	}
+)
 
 func (out Out) Echo(v interface{}) {
 	switch v.(type) {

@@ -5,15 +5,19 @@ import (
 	"strconv"
 )
 
-var currentServer = Server{}
+type (
+	Server struct {
+		Name    string             `json:"name"` // 服务名
+		Host    string             `json:"host"` // 当前Host
+		Port    int                `json:"port"` // 当前Port
+		Servers []*Server          `json:"-"`    // 兄弟服务
+		Vendors map[string]*Server `json:"-"`    // 供应商服务
+	}
+)
 
-type Server struct {
-	Name    string             `json:"name"` // 服务名
-	Host    string             `json:"host"` // 当前Host
-	Port    int                `json:"port"` // 当前Port
-	Servers []*Server          `json:"-"`    // 兄弟服务
-	Vendors map[string]*Server `json:"-"`    // 供应商服务
-}
+var (
+	currentServer = Server{}
+)
 
 func InitServer(port int) {
 	// TODO: Register default state print

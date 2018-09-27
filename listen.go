@@ -1,26 +1,24 @@
 package goe
 
-//
-var listenRegistry = make(map[string]*ListenRegister)
+type (
+	Listens []*Listen
+	Process = func(in In) Program
+	Listen  struct {
+		Name    string  `json:"name"`    //
+		Comment string  `json:"comment"` //
+		Process Process `json:"-"`       //
+	}
+	ListenRegister struct {
+		Name    string  `json:"-"`       //
+		Comment string  `json:"comment"` //
+		Actions Actions `json:"actions"` //
+		Listen  *Listen `json:"-"`       //
+	}
+)
 
-//
-type Listens []*Listen
-
-//
-type Process = func(in In) Program
-
-type Listen struct {
-	Name    string  `json:"name"`    //
-	Comment string  `json:"comment"` //
-	Process Process `json:"-"`       //
-}
-
-type ListenRegister struct {
-	Name    string  `json:"-"`       //
-	Comment string  `json:"comment"` //
-	Actions Actions `json:"actions"` //
-	Listen  *Listen `json:"-"`       //
-}
+var (
+	listenRegistry = make(map[string]*ListenRegister)
+)
 
 func (listen *Listen) Relate(actionRoute string) {
 	listenRegister, exist := listenRegistry[listen.Name]

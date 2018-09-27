@@ -1,24 +1,21 @@
 package goe
 
-//
-var actionRegistry = make(Actions)
+type (
+	Actions map[string]*Action
+	Program = func(in In, out Out)
+	Methods = []string
+	Action  struct {
+		Route   string  `json:"-"`       //
+		Method  Methods `json:"method"`  //
+		Comment string  `json:"comment"` //
+		Listens Listens `json:"listens"` //
+		Program Program `json:"-"`       //
+	}
+)
 
-//
-type Actions map[string]*Action
-
-//
-type Program = func(in In, out Out)
-
-//
-type Methods = []string
-
-type Action struct {
-	Route   string  `json:"-"`       //
-	Method  Methods `json:"method"`  //
-	Comment string  `json:"comment"` //
-	Listens Listens `json:"listens"` //
-	Program Program `json:"-"`       //
-}
+var (
+	actionRegistry = make(Actions)
+)
 
 func (action *Action) Relate(listenName string) {
 	for i := 0; i < len(action.Listens); i++ {
