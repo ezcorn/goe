@@ -1,6 +1,7 @@
 package goe
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -19,7 +20,7 @@ var (
 	currentServer = Server{}
 )
 
-func InitServer(port int) {
+func InitServer() {
 	// TODO: Register default state print
 	initServerStatus()
 	// TODO: Exec runtime
@@ -53,5 +54,11 @@ func InitServer(port int) {
 	initVendorTask()
 
 	// TODO: Start server
-	http.ListenAndServe(":"+strconv.Itoa(port), nil)
+	http.ListenAndServe(":"+strconv.Itoa(canUsePort()), nil)
+}
+
+func canUsePort() int {
+	port := 9339
+	log.Println("Port is " + strconv.Itoa(port))
+	return port
 }
