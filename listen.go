@@ -20,20 +20,6 @@ var (
 	listenRegistry = make(map[string]*ListenRegister)
 )
 
-func (listen *Listen) Relate(actionRoute string) {
-	listenRegister, exist := listenRegistry[listen.Name]
-	if !exist {
-		return
-	}
-	if action, exist := actionRegistry[actionRoute]; exist {
-		if _, exist := listenRegister.Actions[actionRoute]; exist {
-			return
-		}
-		listenRegister.Actions[actionRoute] = action
-		action.Listens = append(action.Listens, listen)
-	}
-}
-
 func NewListen(name string, comment string, process Process) *Listen {
 	if process == nil {
 		process = func(in In) Program { return nil }
@@ -45,7 +31,7 @@ func NewListen(name string, comment string, process Process) *Listen {
 	}
 }
 
-func RegListen(new func() *Listen, relate func(l *Listen)) {
+func RegListen(new func() *Listen) {
 	listen := new()
 	if new != nil {
 		joinManage(manageListen, func() {
@@ -56,8 +42,5 @@ func RegListen(new func() *Listen, relate func(l *Listen)) {
 				Listen:  listen,
 			}
 		})
-		if relate != nil {
-			joinManage(manageRelate, func() { relate(listen) })
-		}
 	}
 }
