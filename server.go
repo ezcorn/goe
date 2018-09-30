@@ -1,9 +1,7 @@
 package goe
 
 import (
-	"log"
 	"net/http"
-	"strconv"
 )
 
 type (
@@ -54,11 +52,5 @@ func InitServer() {
 	initVendorTask()
 
 	// TODO: Start server
-	http.ListenAndServe(":"+strconv.Itoa(canUsePort()), nil)
-}
-
-func canUsePort() int {
-	port := 9339
-	log.Println("Port is " + strconv.Itoa(port))
-	return port
+	http.ListenAndServe(":9339", nil)
 }
