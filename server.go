@@ -42,7 +42,7 @@ func InitServer() {
 				return
 			}
 		}
-		out.Status(http.StatusNotFound)
+		out.status(http.StatusNotFound)
 	})
 
 	// TODO: Register goe apis
