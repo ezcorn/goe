@@ -47,6 +47,7 @@ func (out Out) Status(code int) {
 	if f, ok := statusRegistry[code]; ok {
 		if f != nil {
 			http.Error(out.w, f(code), code)
+			return
 		}
 	}
 	out.Status(http.StatusNotFound)
