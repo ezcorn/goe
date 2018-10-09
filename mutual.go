@@ -55,28 +55,22 @@ func (out Out) Echo(v interface{}) {
 			var output string
 			switch v.(type) {
 			case Norm:
-				{
-					norm := v.(Norm)
-					code := jsonOutputCode200
-					info := norm.Info
-					data := norm.Data
-					if info != "" {
-						code = jsonOutputCode500
-					}
-					if data == nil {
-						data = make(map[string]string)
-					}
-					output = out.JsonEncode(map[string]interface{}{
-						"code": code,
-						"data": data,
-						"info": info,
-					})
-					break
+				norm := v.(Norm)
+				outputMap := map[string]interface{}{
+					"code": jsonOutputCode200,
+					"data": norm.Data,
+					"info": norm.Info,
 				}
+				if norm.Info != "" {
+					outputMap["code"] = jsonOutputCode500
+				}
+				if norm.Data == nil {
+					outputMap["data"] = make(map[string]string)
+				}
+				output = out.JsonEncode(outputMap)
+				break
 			default:
-				{
-					output = out.JsonEncode(v)
-				}
+				output = out.JsonEncode(v)
 			}
 			fmt.Fprintf(out.w, output)
 			break
