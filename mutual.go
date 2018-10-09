@@ -10,8 +10,8 @@ import (
 
 const (
 	filePermission    = 0755
-	jsonOutputCode200 = "200"
-	jsonOutputCode500 = "500"
+	jsonOutputCode200 = 200
+	jsonOutputCode500 = 500
 )
 
 type (
@@ -115,5 +115,5 @@ func (out Out) IoMkDir(dir string) {
 }
 
 func (out Out) IoWrite(fileName string, content string) {
-
+	ioutil.WriteFile(fileName, []byte(content), filePermission)
 }
