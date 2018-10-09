@@ -1,15 +1,13 @@
 package goe
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/ezcorn/goe/libs"
 	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 const (
-	filePermission    = 0755
 	jsonOutputCode200 = 200
 	jsonOutputCode500 = 500
 )
@@ -19,7 +17,8 @@ type (
 		r *http.Request
 	}
 	Out struct {
-		w http.ResponseWriter
+		w    http.ResponseWriter
+		Libs libs.Libs
 	}
 	Norm struct {
 		Data interface{}
@@ -41,10 +40,8 @@ func (in In) Body() []byte {
 func (out Out) Echo(v interface{}) {
 	switch v.(type) {
 	case string:
-		{
-			fmt.Fprintf(out.w, v.(string))
-			break
-		}
+		fmt.Fprintf(out.w, v.(string))
+		break
 	case View:
 		{
 			break
@@ -64,13 +61,10 @@ func (out Out) Echo(v interface{}) {
 				if norm.Info != "" {
 					outputMap["code"] = jsonOutputCode500
 				}
-				if norm.Data == nil {
-					outputMap["data"] = make(map[string]string)
-				}
-				output = out.JsonEncode(outputMap)
+				output = out.Libs.Json.Encode(outputMap)
 				break
 			default:
-				output = out.JsonEncode(v)
+				output = out.Libs.Json.Encode(v)
 			}
 			fmt.Fprintf(out.w, output)
 			break
@@ -93,26 +87,4 @@ func (out Out) Status(b bool, code int) bool {
 		out.status(code)
 	}
 	return b
-}
-func (out Out) JsonEncode(data interface{}) string {
-	j, err := json.Marshal(data)
-	if err != nil {
-		return ""
-	}
-	return string(j)
-}
-
-func (out Out) IoExist(fileName string) bool {
-	_, err := os.Stat(fileName)
-	return !os.IsNotExist(err)
-}
-
-func (out Out) IoMkDir(dir string) {
-	if !out.IoExist(dir) {
-		os.Mkdir(dir, filePermission)
-	}
-}
-
-func (out Out) IoWrite(fileName string, content string) {
-	ioutil.WriteFile(fileName, []byte(content), filePermission)
 }
