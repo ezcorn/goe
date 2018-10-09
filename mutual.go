@@ -52,7 +52,7 @@ func (out Out) Echo(v interface{}) {
 	default:
 		{
 			out.w.Header().Set("Content-Type", "application/json")
-			var j []byte
+			var output string
 			switch v.(type) {
 			case Norm:
 				{
@@ -66,7 +66,7 @@ func (out Out) Echo(v interface{}) {
 					if data == nil {
 						data = make(map[string]string)
 					}
-					j, _ = json.Marshal(map[string]interface{}{
+					output = out.JsonEncode(map[string]interface{}{
 						"code": code,
 						"data": data,
 						"info": info,
@@ -75,12 +75,10 @@ func (out Out) Echo(v interface{}) {
 				}
 			default:
 				{
-					j, _ = json.Marshal(v)
+					output = out.JsonEncode(v)
 				}
 			}
-			if len(j) != 0 {
-				fmt.Fprintf(out.w, string(j))
-			}
+			fmt.Fprintf(out.w, output)
 			break
 		}
 	}
