@@ -102,6 +102,13 @@ func (out Out) Status(b bool, code int) bool {
 	}
 	return b
 }
+func (out Out) JsonEncode(data interface{}) string {
+	j, err := json.Marshal(data)
+	if err != nil {
+		return ""
+	}
+	return string(j)
+}
 
 func (out Out) IoExist(fileName string) bool {
 	_, err := os.Stat(fileName)
