@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	filePermission = 0755
+	filePermission    = 0755
+	jsonOutputCode200 = "200"
+	jsonOutputCode500 = "500"
 )
 
 type (
@@ -18,6 +20,12 @@ type (
 	}
 	Out struct {
 		w http.ResponseWriter
+	}
+	Norm struct {
+		Data interface{}
+		Info string
+	}
+	View struct {
 	}
 )
 
@@ -30,22 +38,51 @@ func (in In) Body() []byte {
 	return body
 }
 
-func (out Out) Echo(v ...interface{}) {
-	if len(v) == 0 {
-		return
-	}
-	switch v[0].(type) {
+func (out Out) Echo(v interface{}) {
+	switch v.(type) {
 	case string:
-		fmt.Fprintf(out.w, v[0].(string))
-		break
+		{
+			fmt.Fprintf(out.w, v.(string))
+			break
+		}
+	case View:
+		{
+			break
+		}
 	default:
-		out.w.Header().Set("Content-Type", "application/json")
-		j, _ := json.Marshal(map[string]interface{}{
-			"code": "",
-			"data": v[0],
-			"info": "",
-		})
-		fmt.Fprintf(out.w, string(j))
+		{
+			out.w.Header().Set("Content-Type", "application/json")
+			var j []byte
+			switch v.(type) {
+			case Norm:
+				{
+					norm := v.(Norm)
+					code := jsonOutputCode200
+					info := norm.Info
+					data := norm.Data
+					if info != "" {
+						code = jsonOutputCode500
+					}
+					if data == nil {
+						data = make(map[string]string)
+					}
+					j, _ = json.Marshal(map[string]interface{}{
+						"code": code,
+						"data": data,
+						"info": info,
+					})
+					break
+				}
+			default:
+				{
+					j, _ = json.Marshal(v)
+				}
+			}
+			if len(j) != 0 {
+				fmt.Fprintf(out.w, string(j))
+			}
+			break
+		}
 	}
 }
 
