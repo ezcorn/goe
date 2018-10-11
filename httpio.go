@@ -18,13 +18,19 @@ type (
 	}
 	Out struct {
 		w    http.ResponseWriter
-		Libs libs.Libs
+		Libs Libs
 	}
 	Norm struct {
 		Data interface{}
 		Info string
 	}
 	View struct {
+	}
+	Libs struct {
+		Memory libs.Memory
+		Queue  libs.Queue
+		Json   libs.Json
+		IO     libs.IO
 	}
 )
 

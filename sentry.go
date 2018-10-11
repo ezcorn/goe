@@ -1,5 +1,0 @@
-package goe
-
-func initServerSentry() {
-
-}
