@@ -15,16 +15,16 @@ const (
 
 type (
 	Server struct {
-		Name    string             `json:"name"` // 服务名
-		Host    string             `json:"host"` // 当前Host
-		Port    int                `json:"port"` // 当前Port
-		Servers []*Server          `json:"-"`    // 兄弟服务
-		Vendors map[string]*Server `json:"-"`    // 供应商服务
+		Name    string            `json:"name"` // 服务名,比如说dmbr,stio之类的
+		Host    string            `json:"host"` // 当前Host
+		Port    int               `json:"port"` // 当前Port
+		Servers []Server          `json:"-"`    // 兄弟服务
+		Vendors map[string]Server `json:"-"`    // 供应商服务
 	}
 )
 
 var (
-	// currentServer  = Server{}
+	currentServer  Server
 	serverManage   = make(map[string][]func())
 	statusRegistry = make(map[int]func(int) string)
 	httpStatus     = []int{
@@ -36,10 +36,17 @@ var (
 	}
 )
 
-func InitServer() {
+func InitServer(name string) {
 	// TODO: Init system
+	host, _ := os.Hostname()
+	currentServer = Server{
+		Name:    name,
+		Host:    host,
+		Port:    9339,
+		Servers: []Server{},
+		Vendors: make(map[string]Server),
+	}
 	if len(os.Args) == 1 {
-		// 重新构建Server
 	} else {
 		// 检查 args[1]参数是否符合host:port
 		// 从host:port获取数据
@@ -50,6 +57,8 @@ func InitServer() {
 			return strconv.Itoa(code) + " " + http.StatusText(code)
 		})
 	}
+	// TODO: Register goe apis
+	initSystemApis()
 	// TODO: Exec runtime
 	queue := []string{manageStatus, manageListen, manageAction, manageRelate}
 	for i := 0; i < len(queue); i++ {
@@ -78,10 +87,8 @@ func InitServer() {
 		}
 		out.status(http.StatusNotFound)
 	})
-	// TODO: Register goe apis
-	initSysteApis()
 	// TODO: Start server
-	http.ListenAndServe(":9339", nil)
+	http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
 }
 
 func joinManage(t string, f func()) {
@@ -90,8 +97,6 @@ func joinManage(t string, f func()) {
 
 func RegStatus(code int, f func(int) string) {
 	if f != nil {
-		joinManage(manageStatus, func() {
-			statusRegistry[code] = f
-		})
+		joinManage(manageStatus, func() { statusRegistry[code] = f })
 	}
 }
