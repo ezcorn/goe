@@ -1,24 +1,28 @@
 package goe
 
 type (
-	Actions map[string]*Action
-	Program = func(in In, out Out)
+	Map     map[string]interface{}
+	Arr     []interface{}
+	Program = func(in In, out Out, libs Libs)
+	Process = func(in In) Program
 	Methods = []string
-	Action  struct {
+
+	Action struct {
 		Route   string  `json:"-"`       //
 		Method  Methods `json:"method"`  //
 		Comment string  `json:"comment"` //
 		Listens Listens `json:"listens"` //
 		Program Program `json:"-"`       //
 	}
+	Actions map[string]*Action
 
-	Listens []*Listen
-	Process = func(in In) Program
-	Listen  struct {
+	Listen struct {
 		Name    string  `json:"name"`    //
 		Comment string  `json:"comment"` //
 		Process Process `json:"-"`       //
 	}
+	Listens []*Listen
+
 	ListenRegister struct {
 		Name    string  `json:"-"`       //
 		Comment string  `json:"comment"` //
@@ -43,7 +47,7 @@ func (action *Action) MethodContains(method string) bool {
 
 func NewAction(route string, comment string, method []string, program Program) *Action {
 	if program == nil {
-		program = func(in In, out Out) {}
+		program = func(in In, out Out, libs Libs) {}
 	}
 	return &Action{
 		Route:   route,

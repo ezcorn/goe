@@ -68,22 +68,26 @@ func InitServer(name string, port int) {
 			serverManage[queue[i]][j]()
 		}
 	}
+
+	// TODO: Init libs
+	var libs Libs
+
 	// TODO: Goe framework
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		out := Out{w: writer}
+		out := Out{w: writer, libs: libs}
 		if action, ok := actionRegistry[request.URL.Path]; ok {
-			in := In{r: request}
+			in := In{r: request, libs: libs}
 			// TODO: Check listen
 			if action.MethodContains(request.Method) {
 				for _, listen := range action.Listens {
 					result := listen.Process(in)
 					if result != nil {
-						result(in, out)
+						result(in, out, libs)
 						return
 					}
 				}
 				// TODO: Exec action
-				action.Program(in, out)
+				action.Program(in, out, libs)
 				return
 			}
 		}

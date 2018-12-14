@@ -20,10 +20,10 @@ func (IO) Exist(fileName string) bool {
 
 func (io IO) MkDir(dir string) {
 	if !io.Exist(dir) {
-		os.Mkdir(dir, filePermission)
+		_ = os.Mkdir(dir, filePermission)
 	}
 }
 
 func (IO) Write(fileName string, content string) {
-	ioutil.WriteFile(fileName, []byte(content), filePermission)
+	_ = ioutil.WriteFile(fileName, []byte(content), filePermission)
 }

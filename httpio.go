@@ -19,7 +19,7 @@ type (
 	}
 	Out struct {
 		w    http.ResponseWriter
-		Libs Libs
+		libs Libs
 	}
 	Norm struct {
 		Data interface{}
@@ -55,21 +55,34 @@ func (in In) BodyObj(v interface{}) {
 	in.libs.Json.Decode(in.Body(), v)
 }
 
-func (in In) BodyMap() map[string]interface{} {
-	input := map[string]interface{}{}
-	in.BodyObj(&input)
-	return input
+func (in In) BodyMap() Map {
+	mp := Map{}
+	in.BodyObj(&mp)
+	return mp
 }
 
-func (in In) BodyArr() []interface{} {
-	var input []interface{}
-	in.BodyObj(&input)
-	return input
+func (in In) BodyMapKeyExist(keys []string, exec func(body Map)) {
+	mp := in.BodyMap()
+	if mp != nil {
+		for _, k := range keys {
+			if _, existKey := mp[k]; !existKey {
+				return
+			}
+		}
+	}
+	exec(mp)
+}
+
+func (in In) BodyArr() Arr {
+	var arr Arr
+	in.BodyObj(&arr)
+	return arr
 }
 
 func (out Out) Echo(v interface{}) {
 	switch v.(type) {
 	case string:
+		out.w.Header().Set("Content-Type", "application/text")
 		_, _ = fmt.Fprintf(out.w, v.(string))
 		break
 	case View:
@@ -83,7 +96,7 @@ func (out Out) Echo(v interface{}) {
 			switch v.(type) {
 			case Norm:
 				norm := v.(Norm)
-				outputMap := map[string]interface{}{
+				outputMap := Map{
 					"code": jsonOutputCode200,
 					"data": norm.Data,
 					"info": norm.Info,
@@ -91,10 +104,10 @@ func (out Out) Echo(v interface{}) {
 				if norm.Info != "" {
 					outputMap["code"] = jsonOutputCode500
 				}
-				output = out.Libs.Json.Encode(outputMap)
+				output = out.libs.Json.Encode(outputMap)
 				break
 			default:
-				output = out.Libs.Json.Encode(v)
+				output = out.libs.Json.Encode(v)
 			}
 			_, _ = fmt.Fprintf(out.w, output)
 			break
