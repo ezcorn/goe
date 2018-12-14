@@ -18,6 +18,8 @@ type (
 		Name    string            `json:"name"` // 服务名,比如说dmbr,stio之类的
 		Host    string            `json:"host"` // 当前Host
 		Port    int               `json:"port"` // 当前Port
+		Child   []Server          `json:"-"`    // 子集服务
+		Parent  *Server           `json:"-"`    // 上级服务
 		Servers []Server          `json:"-"`    // 兄弟服务
 		Vendors map[string]Server `json:"-"`    // 供应商服务
 	}
@@ -36,21 +38,21 @@ var (
 	}
 )
 
-func InitServer(name string) {
+func InitServer(name string, port int) {
 	// TODO: Init system
 	host, _ := os.Hostname()
 	currentServer = Server{
 		Name:    name,
 		Host:    host,
-		Port:    9339,
+		Port:    port,
 		Servers: []Server{},
 		Vendors: make(map[string]Server),
 	}
-	if len(os.Args) == 1 {
-	} else {
-		// 检查 args[1]参数是否符合host:port
-		// 从host:port获取数据
-	}
+	//if len(os.Args) == 1 {
+	//} else {
+	//	// 检查 args[1]参数是否符合host:port
+	//	// 从host:port获取数据
+	//}
 	// TODO: Register default state print
 	for i := 0; i < len(httpStatus); i++ {
 		RegStatus(httpStatus[i], func(code int) string {
@@ -58,7 +60,7 @@ func InitServer(name string) {
 		})
 	}
 	// TODO: Register goe apis
-	initSystemApis()
+	// initSystemApis()
 	// TODO: Exec runtime
 	queue := []string{manageStatus, manageListen, manageAction, manageRelate}
 	for i := 0; i < len(queue); i++ {
