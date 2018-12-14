@@ -14,7 +14,8 @@ const (
 
 type (
 	In struct {
-		r *http.Request
+		r    *http.Request
+		libs Libs
 	}
 	Out struct {
 		w    http.ResponseWriter
@@ -27,10 +28,9 @@ type (
 	View struct {
 	}
 	Libs struct {
-		Memory libs.Memory
-		Queue  libs.Queue
-		Json   libs.Json
-		IO     libs.IO
+		Queue libs.Queue
+		Json  libs.Json
+		IO    libs.IO
 	}
 )
 
@@ -43,10 +43,34 @@ func (in In) Body() []byte {
 	return body
 }
 
+func (in In) BodyStr() string {
+	body := in.Body()
+	if body == nil {
+		return ""
+	}
+	return string(body)
+}
+
+func (in In) BodyObj(v interface{}) {
+	in.libs.Json.Decode(in.Body(), v)
+}
+
+func (in In) BodyMap() map[string]interface{} {
+	input := map[string]interface{}{}
+	in.BodyObj(&input)
+	return input
+}
+
+func (in In) BodyArr() []interface{} {
+	var input []interface{}
+	in.BodyObj(&input)
+	return input
+}
+
 func (out Out) Echo(v interface{}) {
 	switch v.(type) {
 	case string:
-		fmt.Fprintf(out.w, v.(string))
+		_, _ = fmt.Fprintf(out.w, v.(string))
 		break
 	case View:
 		{
@@ -72,7 +96,7 @@ func (out Out) Echo(v interface{}) {
 			default:
 				output = out.Libs.Json.Encode(v)
 			}
-			fmt.Fprintf(out.w, output)
+			_, _ = fmt.Fprintf(out.w, output)
 			break
 		}
 	}

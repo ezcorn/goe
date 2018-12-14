@@ -14,6 +14,9 @@ func (Json) Encode(data interface{}) string {
 	return string(j)
 }
 
-func (Json) Decode(json string) interface{} {
-	return nil
+func (Json) Decode(data []byte, v interface{}) {
+	err := json.Unmarshal(data, v)
+	if err != nil {
+		v = nil
+	}
 }
