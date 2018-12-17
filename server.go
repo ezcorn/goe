@@ -14,14 +14,15 @@ const (
 )
 
 type (
+	// 服务结构
 	Server struct {
 		Name    string            `json:"name"` // 服务名,比如说dmbr,stio之类的
-		Host    string            `json:"host"` // 当前Host
+		host    string            `json:"-"`    // 当前Host
 		Port    int               `json:"port"` // 当前Port
-		Child   []Server          `json:"-"`    // 子集服务
-		Parent  *Server           `json:"-"`    // 上级服务
-		Servers []Server          `json:"-"`    // 兄弟服务
-		Vendors map[string]Server `json:"-"`    // 供应商服务
+		child   []Server          `json:"-"`    // 子集服务
+		parent  *Server           `json:"-"`    // 上级服务
+		servers []Server          `json:"-"`    // 兄弟服务
+		vendors map[string]Server `json:"-"`    // 供应商服务
 	}
 )
 
@@ -38,15 +39,15 @@ var (
 	}
 )
 
-func InitServer(name string, port int) {
+func (s Server) InitServer() {
 	// TODO: Init system
 	host, _ := os.Hostname()
 	currentServer = Server{
-		Name:    name,
-		Host:    host,
-		Port:    port,
-		Servers: []Server{},
-		Vendors: make(map[string]Server),
+		Name:    s.Name,
+		host:    host,
+		Port:    s.Port,
+		servers: []Server{},
+		vendors: make(map[string]Server),
 	}
 	//if len(os.Args) == 1 {
 	//} else {
@@ -55,7 +56,7 @@ func InitServer(name string, port int) {
 	//}
 	// TODO: Register default state print
 	for i := 0; i < len(httpStatus); i++ {
-		RegStatus(httpStatus[i], func(code int) string {
+		s.RegStatus(httpStatus[i], func(code int) string {
 			return strconv.Itoa(code) + " " + http.StatusText(code)
 		})
 	}
@@ -74,11 +75,11 @@ func InitServer(name string, port int) {
 
 	// TODO: Goe framework
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-		out := Out{w: writer, libs: libs}
+		out := Out{w: writer}
 		if action, ok := actionRegistry[request.URL.Path]; ok {
-			in := In{r: request, libs: libs}
+			in := In{r: request}
 			// TODO: Check listen
-			if action.MethodContains(request.Method) {
+			if action.methodContains(request.Method) {
 				for _, listen := range action.Listens {
 					result := listen.Process(in, libs)
 					if result != nil {
@@ -97,11 +98,7 @@ func InitServer(name string, port int) {
 	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
 }
 
-func joinManage(t string, f func()) {
-	serverManage[t] = append(serverManage[t], f)
-}
-
-func RegStatus(code int, f func(int) string) {
+func (s Server) RegStatus(code int, f func(int) string) {
 	if f != nil {
 		joinManage(manageStatus, func() { statusRegistry[code] = f })
 	}

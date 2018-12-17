@@ -2,7 +2,6 @@ package goe
 
 import (
 	"fmt"
-	"github.com/ezcorn/goe/libs"
 	"io/ioutil"
 	"net/http"
 )
@@ -13,23 +12,26 @@ const (
 )
 
 type (
+	// HTTP输入封装
 	In struct {
-		r    *http.Request
-		libs Libs
+		r *http.Request
 	}
+	// HTTP输出封装
 	Out struct {
-		w    http.ResponseWriter
-		libs Libs
+		w http.ResponseWriter
 	}
+	// 标准JSON输入
 	Norm struct {
 		Data interface{}
 		Info string
 	}
+	// 输出界面
 	View struct {
 	}
+	// 工具库
 	Libs struct {
-		IO   libs.IO
-		Json libs.Json
+		IO   io
+		Root root
 	}
 )
 
@@ -51,7 +53,7 @@ func (in In) BodyStr() string {
 }
 
 func (in In) BodyObj(v interface{}) {
-	in.libs.Json.Decode(in.Body(), v)
+	jsonDecode(in.Body(), v)
 }
 
 func (in In) BodyMap() Map {
@@ -103,10 +105,10 @@ func (out Out) Echo(v interface{}) {
 				if norm.Info != "" {
 					outputMap["code"] = jsonOutputCode500
 				}
-				output = out.libs.Json.Encode(outputMap)
+				output = jsonEncode(outputMap)
 				break
 			default:
-				output = out.libs.Json.Encode(v)
+				output = jsonEncode(v)
 			}
 			_, _ = fmt.Fprintf(out.w, output)
 			break

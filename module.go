@@ -1,42 +1,48 @@
 package goe
 
 type (
-	Map     map[string]interface{}
-	Arr     []interface{}
-	Program = func(in In, out Out, libs Libs)
-	Process = func(in In, libs Libs) Program
-	Methods = []string
-
-	Action struct {
+	// 控制器函数模型
+	program = func(in In, out Out, libs Libs)
+	// 监听器函数模型
+	process = func(in In, libs Libs) program
+	// 可访问的方法数组
+	methods = []string
+	// 控制器结构
+	action struct {
 		Route   string  `json:"-"`       //
-		Method  Methods `json:"method"`  //
+		Method  methods `json:"method"`  //
 		Comment string  `json:"comment"` //
-		Listens Listens `json:"listens"` //
-		Program Program `json:"-"`       //
+		Listens listens `json:"listens"` //
+		Program program `json:"-"`       //
 	}
-	Actions map[string]*Action
-
-	Listen struct {
+	// 控制器数组
+	actions map[string]*action
+	// 监听器结构
+	listen struct {
 		Name    string  `json:"name"`    //
 		Comment string  `json:"comment"` //
-		Process Process `json:"-"`       //
+		Process process `json:"-"`       //
 	}
-	Listens []*Listen
-
-	ListenRegister struct {
+	// 监听器数组
+	listens []*listen
+	// 监听器注册结构
+	listenRegister struct {
 		Name    string  `json:"-"`       //
 		Comment string  `json:"comment"` //
-		Actions Actions `json:"actions"` //
-		Listen  *Listen `json:"-"`       //
+		Actions actions `json:"actions"` //
+		Listen  *listen `json:"-"`       //
 	}
 )
 
 var (
-	actionRegistry = make(Actions)
-	listenRegistry = make(map[string]*ListenRegister)
+	// 控制器注册表
+	actionRegistry = make(actions)
+	// 监听器注册表
+	listenRegistry = make(map[string]*listenRegister)
 )
 
-func (action *Action) MethodContains(method string) bool {
+//
+func (action *action) methodContains(method string) bool {
 	for _, v := range action.Method {
 		if v == method {
 			return true
@@ -45,54 +51,40 @@ func (action *Action) MethodContains(method string) bool {
 	return false
 }
 
-func NewAction(route string, comment string, method []string, program Program) *Action {
+func (Server) RegAction(route string, comment string, method []string, program program) {
 	if program == nil {
 		program = func(in In, out Out, libs Libs) {}
 	}
-	return &Action{
-		Route:   route,
-		Method:  method,
-		Comment: comment,
-		Listens: Listens{},
-		Program: program,
-	}
+	joinManage(manageAction, func() {
+		actionRegistry[route] = &action{
+			Route:   route,
+			Method:  method,
+			Comment: comment,
+			Listens: listens{},
+			Program: program,
+		}
+	})
 }
 
-func NewListen(name string, comment string, process Process) *Listen {
+func (Server) RegListen(name string, comment string, process process) {
 	if process == nil {
-		process = func(in In, libs Libs) Program { return nil }
+		process = func(in In, libs Libs) program { return nil }
 	}
-	return &Listen{
-		Name:    name,
-		Comment: comment,
-		Process: process,
-	}
+	joinManage(manageListen, func() {
+		listenRegistry[name] = &listenRegister{
+			Name:    name,
+			Comment: comment,
+			Actions: make(actions),
+			Listen: &listen{
+				Name:    name,
+				Comment: comment,
+				Process: process,
+			},
+		}
+	})
 }
 
-func RegAction(new func() *Action) {
-	action := new()
-	if new != nil {
-		joinManage(manageAction, func() {
-			actionRegistry[action.Route] = action
-		})
-	}
-}
-
-func RegListen(new func() *Listen) {
-	listen := new()
-	if new != nil {
-		joinManage(manageListen, func() {
-			listenRegistry[listen.Name] = &ListenRegister{
-				Name:    listen.Name,
-				Comment: listen.Comment,
-				Actions: make(Actions),
-				Listen:  listen,
-			}
-		})
-	}
-}
-
-func RelateActionToListen(actionRoute string, listenName string) {
+func (Server) RelateActionToListen(actionRoute string, listenName string) {
 	joinManage(manageRelate, func() {
 		if action, actionExist := actionRegistry[actionRoute]; actionExist {
 			if listenRegister, listenExist := listenRegistry[listenName]; listenExist {

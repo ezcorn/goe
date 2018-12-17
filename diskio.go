@@ -1,4 +1,4 @@
-package libs
+package goe
 
 import (
 	"io/ioutil"
@@ -10,20 +10,20 @@ const (
 )
 
 type (
-	IO struct{}
+	io struct{}
 )
 
-func (IO) Exist(fileName string) bool {
+func (io) Exist(fileName string) bool {
 	_, err := os.Stat(fileName)
 	return !os.IsNotExist(err)
 }
 
-func (io IO) MkDir(dir string) {
+func (io io) MkDir(dir string) {
 	if !io.Exist(dir) {
 		_ = os.Mkdir(dir, filePermission)
 	}
 }
 
-func (IO) Write(fileName string, content string) {
+func (io) Write(fileName string, content string) {
 	_ = ioutil.WriteFile(fileName, []byte(content), filePermission)
 }
