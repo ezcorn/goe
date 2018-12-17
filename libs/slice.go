@@ -1,5 +1,5 @@
 package libs
 
 type (
-	Queue struct{}
+	Slice struct{}
 )

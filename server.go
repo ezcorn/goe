@@ -80,7 +80,7 @@ func InitServer(name string, port int) {
 			// TODO: Check listen
 			if action.MethodContains(request.Method) {
 				for _, listen := range action.Listens {
-					result := listen.Process(in)
+					result := listen.Process(in, libs)
 					if result != nil {
 						result(in, out, libs)
 						return
@@ -94,7 +94,7 @@ func InitServer(name string, port int) {
 		out.status(http.StatusNotFound)
 	})
 	// TODO: Start server
-	http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
+	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
 }
 
 func joinManage(t string, f func()) {

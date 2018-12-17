@@ -4,7 +4,7 @@ type (
 	Map     map[string]interface{}
 	Arr     []interface{}
 	Program = func(in In, out Out, libs Libs)
-	Process = func(in In) Program
+	Process = func(in In, libs Libs) Program
 	Methods = []string
 
 	Action struct {
@@ -60,7 +60,7 @@ func NewAction(route string, comment string, method []string, program Program) *
 
 func NewListen(name string, comment string, process Process) *Listen {
 	if process == nil {
-		process = func(in In) Program { return nil }
+		process = func(in In, libs Libs) Program { return nil }
 	}
 	return &Listen{
 		Name:    name,

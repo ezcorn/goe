@@ -28,9 +28,8 @@ type (
 	View struct {
 	}
 	Libs struct {
-		Queue libs.Queue
-		Json  libs.Json
-		IO    libs.IO
+		IO   libs.IO
+		Json libs.Json
 	}
 )
 
