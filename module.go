@@ -8,7 +8,7 @@ type (
 	// 可访问的方法数组
 	methods = []string
 	// 控制器结构
-	action struct {
+	Action struct {
 		Route   string  `json:"-"`       //
 		Method  methods `json:"method"`  //
 		Comment string  `json:"comment"` //
@@ -16,7 +16,7 @@ type (
 		Program program `json:"-"`       //
 	}
 	// 控制器数组
-	actions map[string]*action
+	actions map[string]*Action
 	// 监听器结构
 	listen struct {
 		Name    string  `json:"name"`    //
@@ -42,7 +42,7 @@ var (
 )
 
 //
-func (action *action) methodContains(method string) bool {
+func (action *Action) methodContains(method string) bool {
 	for _, v := range action.Method {
 		if v == method {
 			return true
@@ -51,37 +51,27 @@ func (action *action) methodContains(method string) bool {
 	return false
 }
 
-func (Server) RegAction(route string, comment string, method []string, program program) {
-	if program == nil {
-		program = func(in In, out Out, libs Libs) {}
+func (Server) RegAction(new func() *Action) {
+	action := new()
+	if new != nil {
+		joinManage(manageAction, func() {
+			actionRegistry[action.Route] = action
+		})
 	}
-	joinManage(manageAction, func() {
-		actionRegistry[route] = &action{
-			Route:   route,
-			Method:  method,
-			Comment: comment,
-			Listens: listens{},
-			Program: program,
-		}
-	})
 }
 
-func (Server) RegListen(name string, comment string, process process) {
-	if process == nil {
-		process = func(in In, libs Libs) program { return nil }
+func (Server) RegListen(new func() *listen) {
+	listen := new()
+	if new != nil {
+		joinManage(manageListen, func() {
+			listenRegistry[listen.Name] = &listenRegister{
+				Name:    listen.Name,
+				Comment: listen.Comment,
+				Actions: make(actions),
+				Listen:  listen,
+			}
+		})
 	}
-	joinManage(manageListen, func() {
-		listenRegistry[name] = &listenRegister{
-			Name:    name,
-			Comment: comment,
-			Actions: make(actions),
-			Listen: &listen{
-				Name:    name,
-				Comment: comment,
-				Process: process,
-			},
-		}
-	})
 }
 
 func (Server) RelateActionToListen(actionRoute string, listenName string) {
