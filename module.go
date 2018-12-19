@@ -2,9 +2,9 @@ package goe
 
 type (
 	// 控制器函数模型
-	program = func(in In, out Out, libs Libs)
+	program = func(in In, out Out)
 	// 监听器函数模型
-	process = func(in In, libs Libs) program
+	process = func(in In) program
 	// 可访问的方法数组
 	methods = []string
 	// 控制器结构

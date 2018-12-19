@@ -30,6 +30,10 @@ func joinManage(t string, f func()) {
 	serverManage[t] = append(serverManage[t], f)
 }
 
+func uniqueMark() string {
+	return Crypto.MD5(jsonEncode(Device.Network.Mac()))
+}
+
 func MakeServer(name string, port int) *Server {
 	return &Server{
 		Name: name,
@@ -39,7 +43,7 @@ func MakeServer(name string, port int) *Server {
 
 func MakeAction(route string, comment string, method []string, program program) *Action {
 	if program == nil {
-		program = func(in In, out Out, libs Libs) {}
+		program = func(in In, out Out) {}
 	}
 	return &Action{
 		Route:   route,
@@ -52,7 +56,7 @@ func MakeAction(route string, comment string, method []string, program program) 
 
 func MakeListen(name string, comment string, process process) *listen {
 	if process == nil {
-		process = func(in In, libs Libs) program { return nil }
+		process = func(in In) program { return nil }
 	}
 	return &listen{
 		Name:    name,

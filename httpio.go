@@ -28,11 +28,6 @@ type (
 	// 输出界面
 	View struct {
 	}
-	// 工具库
-	Libs struct {
-		IO   io
-		Root root
-	}
 )
 
 func (in In) Body() []byte {
