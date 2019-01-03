@@ -45,9 +45,15 @@ func (io) Write(fileName string, content string) {
 	_ = ioutil.WriteFile(fileName, []byte(content), filePermission)
 }
 
-func (io io) WriteJson(fileName string, data interface{}) {
-	io.Write(fileName, jsonEncode(data))
+func (io io) WriteJson(fileName string, data interface{}) string {
+	json := jsonEncodeIndent(data)
+	io.Write(fileName, json)
+	return json
 }
+
+//func (io io) WriteJsonBase64(fileName string, data interface{}) string {
+//
+//}
 
 func (io io) Read(fileName string) []byte {
 	if io.Exist(fileName) {

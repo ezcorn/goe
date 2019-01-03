@@ -52,7 +52,7 @@ func (s Server) InitServer() {
 		vendors: make(map[string]Server),
 	}
 	// 强制更新冰箱配置文件
-	Icebox.config.update()
+	iceConfig.update()
 	//if len(os.Args) == 1 {
 	//} else {
 	//	// 检查 args[1]参数是否符合host:port

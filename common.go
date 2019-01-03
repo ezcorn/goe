@@ -2,6 +2,10 @@ package goe
 
 import (
 	"encoding/json"
+	"log"
+	"math/rand"
+	"strconv"
+	"time"
 )
 
 type (
@@ -11,6 +15,13 @@ type (
 	Arr []interface{}
 )
 
+func jsonDecode(data []byte, v interface{}) {
+	err := json.Unmarshal(data, v)
+	if err != nil {
+		v = nil
+	}
+}
+
 func jsonEncode(data interface{}) string {
 	j, err := json.Marshal(data)
 	if err != nil {
@@ -19,11 +30,12 @@ func jsonEncode(data interface{}) string {
 	return string(j)
 }
 
-func jsonDecode(data []byte, v interface{}) {
-	err := json.Unmarshal(data, v)
+func jsonEncodeIndent(data interface{}) string {
+	j, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
-		v = nil
+		return ""
 	}
+	return string(j)
 }
 
 func joinManage(t string, f func()) {
@@ -34,6 +46,13 @@ func uniqueMark() string {
 	return Crypto.MD5(jsonEncode(Device.Network.Mac()))
 }
 
+func uniqueHash() string {
+	return Crypto.MD5(strconv.FormatInt(time.Now().UnixNano()+rand.Int63(), 10))
+}
+
+func logPrintln(module string, info string) {
+	log.Println("[ " + module + " ] : " + info)
+}
 func MakeServer(name string, port int) *Server {
 	return &Server{
 		Name: name,
