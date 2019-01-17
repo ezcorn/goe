@@ -1,7 +1,6 @@
 package goe
 
 import (
-	"encoding/json"
 	"log"
 	"math/rand"
 	"strconv"
@@ -15,44 +14,13 @@ type (
 	Arr []interface{}
 )
 
-// JSON反序列化
-func jsonDecode(data []byte, v interface{}) {
-	err := json.Unmarshal(data, v)
-	if err != nil {
-		v = nil
-	}
-}
-
-// JSON序列号
-func jsonEncode(data interface{}) string {
-	j, err := json.Marshal(data)
-	if err != nil {
-		return ""
-	}
-	return string(j)
-}
-
-// JSON序列格式化
-func jsonEncodeIndent(data interface{}) string {
-	j, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		return ""
-	}
-	return string(j)
-}
-
-// 加入协调管理
-func joinManage(t string, f func()) {
-	serverManage[t] = append(serverManage[t], f)
-}
-
 // 唯一哈希(随机)
-func unique(size uint8) string {
+func Unique(size uint8) string {
 	return Crypto.MD5(strconv.FormatInt(time.Now().UnixNano()+rand.Int63(), 10), size)
 }
 
 // 输出分组日志
-func logPrintln(group string, info string) {
+func LogPrintln(group string, info string) {
 	log.Println("[ " + group + " ] : " + info)
 }
 

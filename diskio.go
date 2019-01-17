@@ -38,6 +38,7 @@ func (io io) Dirs(dirPath string) []string {
 	return nil
 }
 
+// 层叠创建文件夹
 func (io io) MkDir(dir string) {
 	ds := strings.Split(dir, pathCharacter)
 	length := len(ds)
@@ -61,6 +62,7 @@ func (io io) MkDir(dir string) {
 	}
 }
 
+// 创建一个文件
 func (io io) Create(fileName string) {
 	if !io.Exist(fileName) {
 		fs := strings.Split(fileName, pathCharacter)
@@ -98,7 +100,7 @@ func (io io) WriteAppendLine(fileName string, content string) error {
 }
 
 func (io io) WriteJson(fileName string, data interface{}) string {
-	json := jsonEncodeIndent(data)
+	json := JSON.EncodeIndent(data)
 	io.Write(fileName, json)
 	return json
 }
@@ -122,6 +124,6 @@ RET:
 func (io io) ReadJson(fileName string, v interface{}) {
 	str := io.Read(fileName)
 	if str != nil {
-		jsonDecode(str, v)
+		JSON.Decode(str, v)
 	}
 }

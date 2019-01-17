@@ -44,7 +44,7 @@ func (s Server) InitServer() {
 	// 初始化当前服务
 	host, _ := os.Hostname()
 	currentServer = Server{
-		ID:      Crypto.MD5(jsonEncode(Device.Network.Mac()), 32),
+		ID:      Crypto.MD5(JSON.Encode(Device.Network.Mac()), 32),
 		Name:    s.Name,
 		host:    host,
 		Port:    s.Port,
@@ -94,6 +94,11 @@ func (s Server) InitServer() {
 	})
 	// TODO: Start server
 	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
+}
+
+// 加入协调管理
+func joinManage(t string, f func()) {
+	serverManage[t] = append(serverManage[t], f)
 }
 
 func (s Server) RegStatus(code int, f func(int) string) {

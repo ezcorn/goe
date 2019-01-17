@@ -51,7 +51,7 @@ func (in In) BodyStr() string {
 
 // 获取头文件对象
 func (in In) BodyObj(v interface{}) {
-	jsonDecode(in.Body(), v)
+	JSON.Decode(in.Body(), v)
 }
 
 // 获取头文件字典
@@ -105,10 +105,10 @@ func (out Out) Echo(v interface{}) {
 				if norm.Info != "" {
 					outputMap["code"] = jsonOutputCode500
 				}
-				output = jsonEncode(outputMap)
+				output = JSON.Encode(outputMap)
 				break
 			default:
-				output = jsonEncode(v)
+				output = JSON.Encode(v)
 			}
 			_, _ = fmt.Fprintf(out.w, output)
 			break
