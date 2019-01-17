@@ -1,5 +1,12 @@
 package goe
 
+import "log"
+
+// 输出分组日志
+func LogPrintln(group string, info string) {
+	log.Println("[ " + group + " ] : " + info)
+}
+
 //func initSystemApis() {
 //	RegAction(func() *Action {
 //		return NewAction("/apis/supplier", "", []string{

@@ -1,16 +1,11 @@
 package mathpp
 
-import "math"
+import (
+	"github.com/ezcorn/goe/data"
+	"math"
+)
 
 type (
-	// 基础数学模型
-	Model interface {
-		// 可计算数字
-		Number() float64
-		// 模型可视化
-		String() string
-	}
-
 	mathPP struct {
 	}
 )
@@ -22,7 +17,7 @@ var (
 // N进制下的极限加法表
 func (mpp mathPP) TableP(rule uint8) *matrix {
 	wh := int(rule)
-	return mpp.CreateMatrix(wh, wh, func(j int, k int) Model {
+	return mpp.CreateMatrix(wh, wh, func(j int, k int) data.Model {
 		return &number{value: float64(j + k), rule: rule}
 	})
 }
@@ -30,7 +25,7 @@ func (mpp mathPP) TableP(rule uint8) *matrix {
 // N进制下的极限乘法表
 func (mpp mathPP) TableM(rule uint8) *matrix {
 	wh := int(rule)
-	return mpp.CreateMatrix(wh, wh, func(j int, k int) Model {
+	return mpp.CreateMatrix(wh, wh, func(j int, k int) data.Model {
 		return &number{value: float64(j * k), rule: rule}
 	})
 }

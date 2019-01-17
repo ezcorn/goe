@@ -1,15 +1,17 @@
 package mathpp
 
+import "github.com/ezcorn/goe/data"
+
 type (
 	// 矩阵结构
 	matrix []*serial
 )
 
 // 创建一个定长高的矩阵,并逐项构建
-func (mpp mathPP) CreateMatrix(w int, h int, item func(i int, j int) Model) *matrix {
+func (mpp mathPP) CreateMatrix(w int, h int, item func(i int, j int) data.Model) *matrix {
 	matrix := &matrix{}
 	for i := 0; i < h; i++ {
-		*matrix = append(*matrix, mpp.CreateSerial(w, func(j int) Model {
+		*matrix = append(*matrix, mpp.CreateSerial(w, func(j int) data.Model {
 			return item(i, j)
 		}))
 	}

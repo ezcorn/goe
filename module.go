@@ -95,3 +95,29 @@ func (Server) RelateActionToListen(actionRoute string, listenName string) {
 		}
 	})
 }
+
+// 生成一个行为
+func MakeAction(route string, comment string, method []string, program program) *Action {
+	if program == nil {
+		program = func(in In, out Out) {}
+	}
+	return &Action{
+		Route:   route,
+		Method:  method,
+		Comment: comment,
+		Listens: listens{},
+		Program: program,
+	}
+}
+
+// 生成一个监听器
+func MakeListen(name string, comment string, process process) *listen {
+	if process == nil {
+		process = func(in In) program { return nil }
+	}
+	return &listen{
+		Name:    name,
+		Comment: comment,
+		Process: process,
+	}
+}

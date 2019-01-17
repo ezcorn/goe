@@ -1,14 +1,17 @@
 package mathpp
 
-import "math"
+import (
+	"github.com/ezcorn/goe/data"
+	"math"
+)
 
 type (
 	// 序列结构
-	serial []Model
+	serial []data.Model
 )
 
 // 创建一个定长的序列,并逐项构建
-func (mathPP) CreateSerial(w int, item func(j int) Model) *serial {
+func (mathPP) CreateSerial(w int, item func(j int) data.Model) *serial {
 	serial := &serial{}
 	for j := 0; j < w; j++ {
 		*serial = append(*serial, item(j))

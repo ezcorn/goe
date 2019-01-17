@@ -88,6 +88,15 @@ func (n *number) String() string {
 	return view
 }
 
+// 对应关系
+func (n *number) Relate() map[string]string {
+	return nil
+}
+
+func (n *number) UseCache() bool {
+	return false
+}
+
 // 加法
 func (n *number) P(n1 *number) *number {
 	return &number{value: n.Number() + n1.Number(), rule: n.rule}

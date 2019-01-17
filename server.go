@@ -2,7 +2,6 @@ package goe
 
 import (
 	"github.com/ezcorn/goe/libs"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -105,37 +104,6 @@ func (s Server) InitServer() {
 	})
 	// TODO: Start server
 	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
-}
-
-// 输出分组日志
-func LogPrintln(group string, info string) {
-	log.Println("[ " + group + " ] : " + info)
-}
-
-// 生成一个行为
-func MakeAction(route string, comment string, method []string, program program) *Action {
-	if program == nil {
-		program = func(in In, out Out) {}
-	}
-	return &Action{
-		Route:   route,
-		Method:  method,
-		Comment: comment,
-		Listens: listens{},
-		Program: program,
-	}
-}
-
-// 生成一个监听器
-func MakeListen(name string, comment string, process process) *listen {
-	if process == nil {
-		process = func(in In) program { return nil }
-	}
-	return &listen{
-		Name:    name,
-		Comment: comment,
-		Process: process,
-	}
 }
 
 // 生成一个服务
