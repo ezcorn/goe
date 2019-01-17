@@ -16,7 +16,7 @@ const (
 type (
 	// 服务结构
 	Server struct {
-		mark    string            `json:"mark"` // 硬件唯一标识符
+		ID      string            `json:"id"`   // 硬件唯一标识符
 		Name    string            `json:"name"` // 服务名,比如说dmbr,stio之类的
 		host    string            `json:"-"`    // 当前Host
 		Port    int               `json:"port"` // 当前Port
@@ -44,15 +44,13 @@ func (s Server) InitServer() {
 	// 初始化当前服务
 	host, _ := os.Hostname()
 	currentServer = Server{
-		mark:    uniqueMark(),
+		ID:      Crypto.MD5(jsonEncode(Device.Network.Mac()), 32),
 		Name:    s.Name,
 		host:    host,
 		Port:    s.Port,
 		servers: []Server{},
 		vendors: make(map[string]Server),
 	}
-	// 强制更新冰箱配置文件
-	iceConfig.update()
 	//if len(os.Args) == 1 {
 	//} else {
 	//	// 检查 args[1]参数是否符合host:port
@@ -92,7 +90,7 @@ func (s Server) InitServer() {
 				return
 			}
 		}
-		out.status(http.StatusNotFound)
+		out.Status(http.StatusNotFound)
 	})
 	// TODO: Start server
 	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)

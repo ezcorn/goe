@@ -1,4 +1,4 @@
-package mathpp
+package mpp
 
 type (
 	// 矩阵结构

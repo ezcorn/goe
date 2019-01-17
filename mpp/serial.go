@@ -1,4 +1,4 @@
-package mathpp
+package mpp
 
 import "math"
 

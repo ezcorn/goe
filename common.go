@@ -15,6 +15,7 @@ type (
 	Arr []interface{}
 )
 
+// JSON反序列化
 func jsonDecode(data []byte, v interface{}) {
 	err := json.Unmarshal(data, v)
 	if err != nil {
@@ -22,6 +23,7 @@ func jsonDecode(data []byte, v interface{}) {
 	}
 }
 
+// JSON序列号
 func jsonEncode(data interface{}) string {
 	j, err := json.Marshal(data)
 	if err != nil {
@@ -30,6 +32,7 @@ func jsonEncode(data interface{}) string {
 	return string(j)
 }
 
+// JSON序列格式化
 func jsonEncodeIndent(data interface{}) string {
 	j, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
@@ -38,28 +41,22 @@ func jsonEncodeIndent(data interface{}) string {
 	return string(j)
 }
 
+// 加入协调管理
 func joinManage(t string, f func()) {
 	serverManage[t] = append(serverManage[t], f)
 }
 
-func uniqueMark() string {
-	return Crypto.MD5(jsonEncode(Device.Network.Mac()))
+// 唯一哈希(随机)
+func unique(size uint8) string {
+	return Crypto.MD5(strconv.FormatInt(time.Now().UnixNano()+rand.Int63(), 10), size)
 }
 
-func uniqueHash() string {
-	return Crypto.MD5(strconv.FormatInt(time.Now().UnixNano()+rand.Int63(), 10))
+// 输出分组日志
+func logPrintln(group string, info string) {
+	log.Println("[ " + group + " ] : " + info)
 }
 
-func logPrintln(module string, info string) {
-	log.Println("[ " + module + " ] : " + info)
-}
-func MakeServer(name string, port int) *Server {
-	return &Server{
-		Name: name,
-		Port: port,
-	}
-}
-
+// 生成一个行为
 func MakeAction(route string, comment string, method []string, program program) *Action {
 	if program == nil {
 		program = func(in In, out Out) {}
@@ -73,6 +70,7 @@ func MakeAction(route string, comment string, method []string, program program) 
 	}
 }
 
+// 生成一个监听器
 func MakeListen(name string, comment string, process process) *listen {
 	if process == nil {
 		process = func(in In) program { return nil }
@@ -81,5 +79,13 @@ func MakeListen(name string, comment string, process process) *listen {
 		Name:    name,
 		Comment: comment,
 		Process: process,
+	}
+}
+
+// 生成一个服务
+func MakeServer(name string, port int) *Server {
+	return &Server{
+		Name: name,
+		Port: port,
 	}
 }

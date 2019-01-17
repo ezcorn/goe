@@ -30,6 +30,7 @@ type (
 	}
 )
 
+// 获取头文件BODY的BYTE编码
 func (in In) Body() []byte {
 	body, err := ioutil.ReadAll(in.r.Body)
 	defer in.r.Body.Close()
@@ -39,6 +40,7 @@ func (in In) Body() []byte {
 	return body
 }
 
+// 获取头文件BODY的字符串
 func (in In) BodyStr() string {
 	body := in.Body()
 	if body == nil {
@@ -47,16 +49,19 @@ func (in In) BodyStr() string {
 	return string(body)
 }
 
+// 获取头文件对象
 func (in In) BodyObj(v interface{}) {
 	jsonDecode(in.Body(), v)
 }
 
+// 获取头文件字典
 func (in In) BodyMap() Map {
 	mp := Map{}
 	in.BodyObj(&mp)
 	return mp
 }
 
+// 判定头文件字典键存在,然后执行
 func (in In) BodyMapKeyExist(keys []string, exec func(body Map)) {
 	mp := in.BodyMap()
 	if mp != nil {
@@ -69,12 +74,14 @@ func (in In) BodyMapKeyExist(keys []string, exec func(body Map)) {
 	exec(mp)
 }
 
+// 获取头文件数组
 func (in In) BodyArr() Arr {
 	var arr Arr
 	in.BodyObj(&arr)
 	return arr
 }
 
+// 向网页输出一段内容
 func (out Out) Echo(v interface{}) {
 	switch v.(type) {
 	case string:
@@ -82,9 +89,7 @@ func (out Out) Echo(v interface{}) {
 		_, _ = fmt.Fprintf(out.w, v.(string))
 		break
 	case View:
-		{
-			break
-		}
+		break
 	default:
 		{
 			out.w.Header().Set("Content-Type", "application/json")
@@ -111,19 +116,13 @@ func (out Out) Echo(v interface{}) {
 	}
 }
 
-func (out Out) status(code int) {
+// 设置当前页面状态码
+func (out Out) Status(code int) {
 	if f, ok := statusRegistry[code]; ok {
 		if f != nil {
 			http.Error(out.w, f(code), code)
 			return
 		}
 	}
-	out.status(http.StatusNotFound)
-}
-
-func (out Out) Status(b bool, code int) bool {
-	if b {
-		out.status(code)
-	}
-	return b
+	out.Status(http.StatusNotFound)
 }

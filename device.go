@@ -15,6 +15,7 @@ var (
 	Device device
 )
 
+// 获取MAC地址
 func (network) Mac() []string {
 	netInterfaces, err := net.Interfaces()
 	if err != nil {
