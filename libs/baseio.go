@@ -1,4 +1,4 @@
-package goe
+package libs
 
 import (
 	"io/ioutil"
@@ -100,7 +100,7 @@ func (io io) WriteAppendLine(fileName string, content string) error {
 }
 
 func (io io) WriteJson(fileName string, data interface{}) string {
-	json := JSON.EncodeIndent(data)
+	json := Json.EncodeIndent(data)
 	io.Write(fileName, json)
 	return json
 }
@@ -124,6 +124,6 @@ RET:
 func (io io) ReadJson(fileName string, v interface{}) {
 	str := io.Read(fileName)
 	if str != nil {
-		JSON.Decode(str, v)
+		Json.Decode(str, v)
 	}
 }

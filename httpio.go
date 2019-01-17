@@ -2,6 +2,7 @@ package goe
 
 import (
 	"fmt"
+	"github.com/ezcorn/goe/libs"
 	"io/ioutil"
 	"net/http"
 )
@@ -51,7 +52,7 @@ func (in In) BodyStr() string {
 
 // 获取头文件对象
 func (in In) BodyObj(v interface{}) {
-	JSON.Decode(in.Body(), v)
+	libs.Json.Decode(in.Body(), v)
 }
 
 // 获取头文件字典
@@ -105,10 +106,10 @@ func (out Out) Echo(v interface{}) {
 				if norm.Info != "" {
 					outputMap["code"] = jsonOutputCode500
 				}
-				output = JSON.Encode(outputMap)
+				output = libs.Json.Encode(outputMap)
 				break
 			default:
-				output = JSON.Encode(v)
+				output = libs.Json.Encode(v)
 			}
 			_, _ = fmt.Fprintf(out.w, output)
 			break

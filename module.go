@@ -41,7 +41,7 @@ var (
 	listenRegistry = make(map[string]*listenRegister)
 )
 
-//
+// 该ACTION中是否存在请求模式
 func (action *Action) methodContains(method string) bool {
 	for _, v := range action.Method {
 		if v == method {
@@ -49,6 +49,17 @@ func (action *Action) methodContains(method string) bool {
 		}
 	}
 	return false
+}
+
+// 加入协调管理
+func joinManage(t string, f func()) {
+	serverManage[t] = append(serverManage[t], f)
+}
+
+func (s Server) RegStatus(code int, f func(int) string) {
+	if f != nil {
+		joinManage(manageStatus, func() { statusRegistry[code] = f })
+	}
 }
 
 func (Server) RegAction(new func() *Action) {

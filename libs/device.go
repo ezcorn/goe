@@ -1,4 +1,4 @@
-package goe
+package libs
 
 import (
 	"net"

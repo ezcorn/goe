@@ -1,8 +1,11 @@
-package goe
+package libs
 
 import (
 	"crypto/md5"
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
 )
 
 type (
@@ -22,4 +25,9 @@ func (crypto) MD5(str string, size uint8) string {
 		return fmt.Sprintf("%x", has)[n : n+size]
 	}
 	return ""
+}
+
+// 唯一哈希(随机)
+func (crypto) Unique(size uint8) string {
+	return Crypto.MD5(strconv.FormatInt(time.Now().UnixNano()+rand.Int63(), 10), size)
 }

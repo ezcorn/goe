@@ -1,6 +1,8 @@
 package goe
 
 import (
+	"github.com/ezcorn/goe/libs"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -14,6 +16,10 @@ const (
 )
 
 type (
+	// 标准字典重定义
+	Map map[string]interface{}
+	// 标准数组重定义
+	Arr []interface{}
 	// 服务结构
 	Server struct {
 		ID      string            `json:"id"`   // 硬件唯一标识符
@@ -28,10 +34,14 @@ type (
 )
 
 var (
-	currentServer  Server
-	serverManage   = make(map[string][]func())
+	// 当前服务对象
+	currentServer Server
+	// 服务协调管理
+	serverManage = make(map[string][]func())
+	// 状态码注册表
 	statusRegistry = make(map[int]func(int) string)
-	httpStatus     = []int{
+	// 状态码数组
+	httpStatus = []int{
 		100, 101, 102,
 		200, 201, 202, 203, 204, 205, 206, 207, 208, 226,
 		300, 301, 302, 303, 304, 305, 307, 308,
@@ -40,11 +50,12 @@ var (
 	}
 )
 
+// 初始化服务
 func (s Server) InitServer() {
 	// 初始化当前服务
 	host, _ := os.Hostname()
 	currentServer = Server{
-		ID:      Crypto.MD5(JSON.Encode(Device.Network.Mac()), 32),
+		ID:      libs.Crypto.MD5(libs.Json.Encode(libs.Device.Network.Mac()), 32),
 		Name:    s.Name,
 		host:    host,
 		Port:    s.Port,
@@ -96,13 +107,41 @@ func (s Server) InitServer() {
 	_ = http.ListenAndServe(":"+strconv.Itoa(currentServer.Port), nil)
 }
 
-// 加入协调管理
-func joinManage(t string, f func()) {
-	serverManage[t] = append(serverManage[t], f)
+// 输出分组日志
+func LogPrintln(group string, info string) {
+	log.Println("[ " + group + " ] : " + info)
 }
 
-func (s Server) RegStatus(code int, f func(int) string) {
-	if f != nil {
-		joinManage(manageStatus, func() { statusRegistry[code] = f })
+// 生成一个行为
+func MakeAction(route string, comment string, method []string, program program) *Action {
+	if program == nil {
+		program = func(in In, out Out) {}
+	}
+	return &Action{
+		Route:   route,
+		Method:  method,
+		Comment: comment,
+		Listens: listens{},
+		Program: program,
+	}
+}
+
+// 生成一个监听器
+func MakeListen(name string, comment string, process process) *listen {
+	if process == nil {
+		process = func(in In) program { return nil }
+	}
+	return &listen{
+		Name:    name,
+		Comment: comment,
+		Process: process,
+	}
+}
+
+// 生成一个服务
+func MakeServer(name string, port int) *Server {
+	return &Server{
+		Name: name,
+		Port: port,
 	}
 }

@@ -1,4 +1,4 @@
-package goe
+package libs
 
 import "encoding/json"
 
@@ -7,7 +7,7 @@ type (
 )
 
 var (
-	JSON jsn
+	Json jsn
 )
 
 // JSON反序列化
